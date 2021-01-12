@@ -22,7 +22,7 @@ public class AccountDaoMem implements AccountDao {
     }
 
     @Override
-    public int add(Account account) {
+    public void add(Account account) {
         int position = accounts.size() + 1;
         accounts.add(account);
 
@@ -31,7 +31,6 @@ public class AccountDaoMem implements AccountDao {
         }
 
         account.setId(position);
-        return position;
     }
 
     @Override

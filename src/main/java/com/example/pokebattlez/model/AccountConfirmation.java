@@ -2,11 +2,11 @@ package com.example.pokebattlez.model;
 
 public class AccountConfirmation {
     private boolean state;
-    private String sessionId;
+    private int id;
 
-    public AccountConfirmation(boolean state, String sessionId) {
+    public AccountConfirmation(boolean state, int id) {
         this.state = state;
-        this.sessionId = sessionId;
+        this.id = id;
     }
 
     public AccountConfirmation() {
@@ -20,11 +20,11 @@ public class AccountConfirmation {
         this.state = state;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public int getSessionId() {
+        return id;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setSessionId(int id) {
+        this.id = id;
     }
 }

@@ -20,11 +20,11 @@ public class AccountConfirmation {
         this.state = state;
     }
 
-    public int getSessionId() {
+    public int getId() {
         return id;
     }
 
-    public void setSessionId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

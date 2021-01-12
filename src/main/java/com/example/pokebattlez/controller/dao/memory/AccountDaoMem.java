@@ -6,19 +6,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AccountDaoMem implements AccountDao {
     private static final List<Account> accounts = new ArrayList<>();
 
     @Override
-    public Account get(int id) {
-        return accounts.stream().filter(account -> account.getId() == id).findFirst().orElse(null);
+    public Optional<Account> get(int id) {
+        return accounts.stream().filter(account -> account.getId() == id).findFirst();
     }
 
     @Override
-    public Account get(String email) {
-        return accounts.stream().filter(account -> account.getEmail().equals(email)).findFirst().orElse(null);
+    public Optional<Account> get(String email) {
+        return accounts.stream().filter(account -> account.getEmail().equals(email)).findFirst();
     }
 
     @Override

@@ -12,6 +12,14 @@ import java.util.Optional;
 public class AccountDaoMem implements AccountDao {
     private static final List<Account> accounts = new ArrayList<>();
 
+    static {
+        accounts.add(new Account(1, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
+        accounts.add(new Account(2, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
+        accounts.add(new Account(3, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
+        accounts.add(new Account(4, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
+        accounts.add(new Account(32, "sup@yo.com", "special", "kilugiluhpohijuyglopj"));
+    }
+
     @Override
     public Optional<Account> get(int id) {
         return accounts.stream().filter(account -> account.getId() == id).findFirst();

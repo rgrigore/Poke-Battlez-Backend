@@ -1,4 +1,4 @@
-package com.example.pokebattlez.model;
+package com.example.pokebattlez.model.request;
 
 public class RegisterForm {
     private String email;

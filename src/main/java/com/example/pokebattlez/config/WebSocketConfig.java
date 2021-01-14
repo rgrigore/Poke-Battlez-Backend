@@ -47,9 +47,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-
+                    System.out.printf("Connected: %s%n", accessor.getFirstNativeHeader("user"));
                     onlineUsers.addUser(Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))));
-                    System.out.println(accessor.getFirstNativeHeader("user"));
+                } else if (accessor != null && StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    System.out.printf("Disconnected: %s%n", accessor.getFirstNativeHeader("user")); // TODO Find a workaround as this is null
+//                    onlineUsers.removeUser(Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))));
                 }
                 return message;
             }

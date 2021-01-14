@@ -1,10 +1,10 @@
 package com.example.pokebattlez.controller;
 
 import com.example.pokebattlez.controller.dao.AccountDao;
+import com.example.pokebattlez.model.dao.Account;
 import com.example.pokebattlez.model.request.AccountConfirmation;
 import com.example.pokebattlez.model.request.LoginForm;
 import com.example.pokebattlez.model.request.RegisterForm;
-import com.example.pokebattlez.model.dao.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;

@@ -17,6 +17,7 @@ public class AccountDaoMem implements AccountDao {
         accounts.add(new Account(2, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
         accounts.add(new Account(3, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
         accounts.add(new Account(4, "sup@yo.com", "meh", "kilugiluhpohijuyglopj"));
+        accounts.add(new Account(5, "marius@test.com", "marius-test", "marius1"));
         accounts.add(new Account(32, "sup@yo.com", "special", "kilugiluhpohijuyglopj"));
     }
 

@@ -6,8 +6,9 @@ import com.example.pokebattlez.model.request.AccountConfirmation;
 import com.example.pokebattlez.model.request.LoginForm;
 import com.example.pokebattlez.model.request.RegisterForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
@@ -17,15 +18,16 @@ import java.util.Optional;
 public class AccountController {
 
     private final AccountDao accountDao;
+    private final SimpMessagingTemplate template;
 
     @Autowired
-    public AccountController(AccountDao accountDao) {
+    public AccountController(AccountDao accountDao, SimpMessagingTemplate template) {
         this.accountDao = accountDao;
+        this.template = template;
     }
 
-    @MessageMapping("/register")
-    @SendTo("/account/register-confirmation")
-    public AccountConfirmation register(RegisterForm form) {
+    @MessageMapping("/register/{id}")
+    public void register(RegisterForm form, @DestinationVariable int id) {
         Account account = new Account();
         account.setEmail(form.getEmail());
         account.setUsername(form.getUsername());
@@ -41,12 +43,11 @@ public class AccountController {
             confirmation.setState(false);
         }
 
-        return confirmation;
+        sendConfirmation(confirmation, id);
     }
 
-    @MessageMapping("/login")
-    @SendTo("/account/login-confirmation")
-    public AccountConfirmation login(LoginForm form) {
+    @MessageMapping("/login/{id}")
+    public void login(LoginForm form, @DestinationVariable int id) {
         Optional<Account> account = accountDao.get(form.getEmail());
 
         AccountConfirmation confirmation = new AccountConfirmation();
@@ -58,6 +59,10 @@ public class AccountController {
             }
         }, () -> confirmation.setState(false));
 
-        return confirmation;
+        sendConfirmation(confirmation, id);
+    }
+
+    private void sendConfirmation(AccountConfirmation confirmation, int id) {
+        template.convertAndSend(String.format("/account/confirm/%d", id), confirmation);
     }
 }

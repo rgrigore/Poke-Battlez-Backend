@@ -5,12 +5,13 @@ import com.example.pokebattlez.model.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class OnlineUsers {
     private static final List<User> users = new LinkedList<>();
+
+    private static final Map<String, Integer> conIdMap = new HashMap<>();
 
     private boolean hasChanged = false;
 
@@ -21,14 +22,30 @@ public class OnlineUsers {
         this.accountDao = accountDao;
     }
 
-    public void addUser(int id) {
-        accountDao.get(id).ifPresent(account -> users.add(new User(account)));
+    public void addUser(int id, String conId) {
+        accountDao.get(id).ifPresent(account -> {
+            User user = new User(account);
+            users.add(user);
+            conIdMap.put(conId, user.getId());
+        });
         hasChanged = true;
     }
 
     public void removeUser(int id) {
         users.stream().filter(user -> user.getId() == id).findFirst().ifPresent(users::remove);
         hasChanged = true;
+    }
+
+    public void removeUser(String conId) {
+        if (conIdMap.containsKey(conId)) {
+            users.stream().filter(user -> user.getId() == conIdMap.get(conId)).findFirst().ifPresent(users::remove);
+            conIdMap.remove(conId);
+            hasChanged = true;
+        }
+    }
+
+    public Optional<User> getUser(int id) {
+        return users.stream().filter(user -> user.getId() == id).findFirst();
     }
 
     public List<User> getUsers() {

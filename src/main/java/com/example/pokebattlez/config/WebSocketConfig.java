@@ -36,8 +36,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat-lobby").setAllowedOriginPatterns("*");
         registry.addEndpoint("/account-management").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/chat-lobby").setAllowedOriginPatterns("*");
     }
 
     @Override
@@ -46,12 +46,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    System.out.printf("Connected: %s%n", accessor.getFirstNativeHeader("user"));
-                    onlineUsers.addUser(Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))));
+                if (accessor != null && StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                    if (Objects.equals(accessor.getDestination(), "/chat/lobby")) {
+                        onlineUsers.addUser(
+                            Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))),
+                            accessor.getSessionId()
+                        );
+                    }
                 } else if (accessor != null && StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-                    System.out.printf("Disconnected: %s%n", accessor.getFirstNativeHeader("user")); // TODO Find a workaround as this is null
-//                    onlineUsers.removeUser(Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))));
+                    onlineUsers.removeUser(accessor.getSessionId());
                 }
                 return message;
             }

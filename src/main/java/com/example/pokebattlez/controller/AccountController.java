@@ -1,7 +1,7 @@
 package com.example.pokebattlez.controller;
 
-import com.example.pokebattlez.controller.dao.AccountDao;
-import com.example.pokebattlez.model.dao.Account;
+import com.example.pokebattlez.controller.repository.AccountRepository;
+import com.example.pokebattlez.model.entity.Account;
 import com.example.pokebattlez.model.request.AccountConfirmation;
 import com.example.pokebattlez.model.request.LoginForm;
 import com.example.pokebattlez.model.request.RegisterForm;
@@ -17,26 +17,28 @@ import java.util.Optional;
 @MessageMapping("/account/*")
 public class AccountController {
 
-    private final AccountDao accountDao;
+    private final AccountRepository accountRepository;
     private final SimpMessagingTemplate template;
 
     @Autowired
-    public AccountController(AccountDao accountDao, SimpMessagingTemplate template) {
-        this.accountDao = accountDao;
+    public AccountController(AccountRepository accountRepository, SimpMessagingTemplate template) {
+        this.accountRepository = accountRepository;
         this.template = template;
     }
 
     @MessageMapping("/register/{id}")
     public void register(RegisterForm form, @DestinationVariable int id) {
-        Account account = new Account();
-        account.setEmail(form.getEmail());
-        account.setUsername(form.getUsername());
-        account.setPassword(form.getPassword());
+
+        Account account = Account.builder()
+                .email(form.getEmail())
+                .username(form.getUsername())
+                .password(form.getPassword())
+                .build();
 
         AccountConfirmation confirmation = new AccountConfirmation();
 
         try {
-            accountDao.add(account);
+            accountRepository.save(account);
             confirmation.setState(true);
             confirmation.setId(account.getId());
         } catch (Exception ignored) {
@@ -47,8 +49,8 @@ public class AccountController {
     }
 
     @MessageMapping("/login/{id}")
-    public void login(LoginForm form, @DestinationVariable int id) {
-        Optional<Account> account = accountDao.get(form.getEmail());
+    public void login(LoginForm form, @DestinationVariable long id) {
+        Optional<Account> account = accountRepository.findById(id);
 
         AccountConfirmation confirmation = new AccountConfirmation();
 
@@ -62,7 +64,7 @@ public class AccountController {
         sendConfirmation(confirmation, id);
     }
 
-    private void sendConfirmation(AccountConfirmation confirmation, int id) {
+    private void sendConfirmation(AccountConfirmation confirmation, long id) {
         template.convertAndSend(String.format("/account/confirm/%d", id), confirmation);
     }
 }

@@ -1,29 +1,22 @@
 package com.example.pokebattlez.model.request;
 
-import com.example.pokebattlez.model.dao.Account;
-
 public class User {
-    private int id;
+    private long id;
     private String name;
 
-    public User(int id, String name) {
+    public User(long id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public User(Account account) {
-        this.id = account.getId();
-        this.name = account.getUsername();
     }
 
     public User() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

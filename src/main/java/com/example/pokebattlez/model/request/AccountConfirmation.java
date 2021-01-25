@@ -2,7 +2,7 @@ package com.example.pokebattlez.model.request;
 
 public class AccountConfirmation {
     private boolean state;
-    private int id;
+    private long id;
     private String username;
 
     public AccountConfirmation(boolean state, int id, String username) {
@@ -22,11 +22,11 @@ public class AccountConfirmation {
         this.state = state;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

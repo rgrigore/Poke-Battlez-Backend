@@ -1,6 +1,5 @@
 package com.example.pokebattlez.controller;
 
-import com.example.pokebattlez.controller.dao.AccountDao;
 import com.example.pokebattlez.model.OnlineUsers;
 import com.example.pokebattlez.model.request.ChatMessage;
 import com.example.pokebattlez.model.request.User;

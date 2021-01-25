@@ -1,6 +1,6 @@
 package com.example.pokebattlez.model;
 
-import com.example.pokebattlez.controller.dao.AccountDao;
+import com.example.pokebattlez.controller.repository.AccountRepository;
 import com.example.pokebattlez.model.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,27 +11,27 @@ import java.util.*;
 public class OnlineUsers {
     private static final List<User> users = new LinkedList<>();
 
-    private static final Map<String, Integer> conIdMap = new HashMap<>();
+    private static final Map<String, Long> conIdMap = new HashMap<>();
 
     private boolean hasChanged = false;
 
-    private final AccountDao accountDao;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public OnlineUsers(AccountDao accountDao) {
-        this.accountDao = accountDao;
+    public OnlineUsers(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
-    public void addUser(int id, String conId) {
-        accountDao.get(id).ifPresent(account -> {
-            User user = new User(account);
+    public void addUser(long id, String conId) {
+        accountRepository.findById(id).ifPresent(account -> {
+            User user = account.generateUser();
             users.add(user);
             conIdMap.put(conId, user.getId());
         });
         hasChanged = true;
     }
 
-    public void removeUser(int id) {
+    public void removeUser(long id) {
         users.stream().filter(user -> user.getId() == id).findFirst().ifPresent(users::remove);
         hasChanged = true;
     }
@@ -44,7 +44,7 @@ public class OnlineUsers {
         }
     }
 
-    public Optional<User> getUser(int id) {
+    public Optional<User> getUser(long id) {
         return users.stream().filter(user -> user.getId() == id).findFirst();
     }
 

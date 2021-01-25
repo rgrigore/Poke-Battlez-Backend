@@ -23,19 +23,19 @@ public class Pokemon {
     @Column(nullable = false) private String name;
     @Column(nullable = false) private Integer level;
 
-    @Column(nullable = false) private Integer hpIV;
-    @Column(nullable = false) private Integer attackIV;
-    @Column(nullable = false) private Integer defenceIV;
-    @Column(nullable = false) private Integer spAttackIV;
-    @Column(nullable = false) private Integer spDefenceIV;
-    @Column(nullable = false) private Integer speedIV;
+    @Column(nullable = false) private Integer IvHp;
+    @Column(nullable = false) private Integer IvAttack;
+    @Column(nullable = false) private Integer IvDefence;
+    @Column(nullable = false) private Integer IvSpAttack;
+    @Column(nullable = false) private Integer IvSpDefence;
+    @Column(nullable = false) private Integer IvSpeed;
 
-    @Column(nullable = false) private Integer hpEV;
-    @Column(nullable = false) private Integer attackEV;
-    @Column(nullable = false) private Integer defenceEV;
-    @Column(nullable = false) private Integer spAttackEV;
-    @Column(nullable = false) private Integer spDefenceEV;
-    @Column(nullable = false) private Integer speedEV;
+    @Column(nullable = false) private Integer EvHp;
+    @Column(nullable = false) private Integer EvAttack;
+    @Column(nullable = false) private Integer EvDefence;
+    @Column(nullable = false) private Integer EvSpAttack;
+    @Column(nullable = false) private Integer EvSpDefence;
+    @Column(nullable = false) private Integer EvSpeed;
 
     @Column(nullable = false) private String gender;
     @Column(nullable = false) private String nature;

@@ -10,7 +10,6 @@ import java.util.*;
 @Component
 public class OnlineUsers {
     private static final List<User> users = new LinkedList<>();
-
     private static final Map<String, Long> conIdMap = new HashMap<>();
 
     private boolean hasChanged = false;
@@ -46,6 +45,14 @@ public class OnlineUsers {
 
     public Optional<User> getUser(long id) {
         return users.stream().filter(user -> user.getId() == id).findFirst();
+    }
+
+    public Optional<User> getUser(String conId) {
+        return getUser(conIdMap.get(conId));
+    }
+
+    public Optional<String> getConId(long id) {
+        return conIdMap.entrySet().stream().filter(entry -> entry.getValue() == id).findFirst().map(Map.Entry::getKey);
     }
 
     public List<User> getUsers() {

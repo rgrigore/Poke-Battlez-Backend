@@ -37,7 +37,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/account-management").setAllowedOriginPatterns("*");
-        registry.addEndpoint("/chat-lobby").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/chat-lobby")
+                .setHandshakeHandler(new LobbyHandshakeHandler())
+                .setAllowedOriginPatterns("*");
     }
 
     @Override
@@ -48,6 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (accessor != null && StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
                     if (Objects.equals(accessor.getDestination(), "/chat/lobby")) {
+                        System.out.println(accessor.getUser().getName()); // TODO Remove this
                         onlineUsers.addUser(
                             Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))),
                             accessor.getSessionId()

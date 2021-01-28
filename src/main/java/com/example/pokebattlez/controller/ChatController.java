@@ -32,9 +32,6 @@ public class ChatController {
                     .orElse("Misingno"),
             HtmlUtils.htmlEscape(userMessage.getBody())
         );
-
-//        System.out.println("Message: " + sha.getUser().getName());
-//        template.convertAndSend(String.format("/chat/private/%s", sha.getUser().getName()), cm);
     }
 
     @MessageMapping("/chat/private")
@@ -55,10 +52,5 @@ public class ChatController {
         template.convertAndSend(String.format("/chat/private/%s", sha.getUser().getName()), pms);
         pms.setSender(false);
         template.convertAndSend(String.format("/chat/private/%s", onlineUsers.getConId(pmr.getTo())), pms);
-    }
-
-    @EventListener
-    public void handleSessionSubscribe(SessionSubscribeEvent event) {
-//        System.out.println(StompHeaderAccessor.wrap(event.getMessage()));
     }
 }

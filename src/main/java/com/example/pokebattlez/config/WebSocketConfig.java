@@ -53,11 +53,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         System.out.println(accessor.getUser().getName()); // TODO Remove this
                         onlineUsers.addUser(
                             Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))),
-                            accessor.getSessionId()
+                            Objects.requireNonNull(accessor.getUser()).getName()
                         );
                     }
                 } else if (accessor != null && StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-                    onlineUsers.removeUser(accessor.getSessionId());
+                    onlineUsers.removeUser(Objects.requireNonNull(accessor.getUser()).getName());
                 }
                 return message;
             }

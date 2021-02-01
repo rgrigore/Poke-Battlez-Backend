@@ -41,6 +41,7 @@ public class AccountController {
             accountRepository.save(account);
             confirmation.setState(true);
             confirmation.setId(account.getId());
+            confirmation.setUsername(account.getUsername());
         } catch (Exception ignored) {
             confirmation.setState(false);
         }
@@ -58,6 +59,7 @@ public class AccountController {
             if (acc.getPassword().equals(form.getPassword())) {
                 confirmation.setState(true);
                 confirmation.setId(acc.getId());
+                confirmation.setUsername(acc.getUsername());
             }
         }, () -> confirmation.setState(false));
 

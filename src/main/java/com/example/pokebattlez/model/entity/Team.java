@@ -20,10 +20,16 @@ public class Team {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Account.class, optional = false)
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Account.class, optional = false)
+    @OneToOne(optional = false, orphanRemoval = true)
     private Account trainer;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private List<Pokemon> pokemon = new ArrayList<>();
+
+    @Transient
+    public void addPokemon(Pokemon pokemon) {
+        this.pokemon.add(pokemon);
+    }
 }

@@ -69,6 +69,7 @@ public class ChatController {
                 pokemon -> {
                     pokemon.updateFields(pokemonRequestReceive);
                     pokemonRepository.save(pokemon);
+                    System.out.println("found: " + pokemon);
                 },
                 () -> {
                     Team team = teamRepository

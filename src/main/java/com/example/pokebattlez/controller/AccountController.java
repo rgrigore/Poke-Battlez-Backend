@@ -51,7 +51,7 @@ public class AccountController {
 
     @MessageMapping("/login/{id}")
     public void login(LoginForm form, @DestinationVariable long id) {
-        Optional<Account> account = accountRepository.findById(id);
+        Optional<Account> account = accountRepository.findAccountByEmail(form.getEmail());
 
         AccountConfirmation confirmation = new AccountConfirmation();
 

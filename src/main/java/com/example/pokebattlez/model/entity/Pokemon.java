@@ -76,4 +76,35 @@ public class Pokemon {
         setMove3(pokemonRequest.getMove3());
         setMove4(pokemonRequest.getMove4());
     }
+
+    @Transient
+    public PokemonRequest generateRequest() {
+        return PokemonRequest.builder()
+                .id(getId())
+                .teamId(getTeam().getId())
+                .position(getPosition())
+                .name(getName())
+                .level(getLevel())
+                .ivHp(getIvHp())
+                .ivAttack(getIvAttack())
+                .ivDefence(getIvDefence())
+                .ivSpAttack(getIvSpAttack())
+                .ivSpDefence(getIvSpDefence())
+                .ivSpeed(getIvSpeed())
+                .evHp(getEvHp())
+                .evAttack(getEvAttack())
+                .evDefence(getEvDefence())
+                .evSpAttack(getEvSpAttack())
+                .evSpDefence(getEvSpDefence())
+                .evSpeed(getEvSpeed())
+                .gender(getGender())
+                .nature(getNature())
+                .heldItem(getHeldItem())
+                .ability(getAbility())
+                .move1(getMove1())
+                .move2(getMove2())
+                .move3(getMove3())
+                .move4(getMove4())
+                .build();
+    }
 }

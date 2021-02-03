@@ -43,6 +43,7 @@ public class PokemonRequest {
     private String move4;
 
     public PokemonRequest(com.example.pokebattlez.model.entity.Pokemon pokemon) {
+        setId(pokemon.getId());
         setTeamId(pokemon.getTeam().getId());
         setPosition(pokemon.getPosition());
         setName(pokemon.getName());

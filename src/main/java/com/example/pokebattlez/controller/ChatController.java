@@ -20,7 +20,6 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -63,6 +62,21 @@ public class ChatController {
         template.convertAndSend(String.format("/chat/private/%s", sha.getUser().getName()), pms);
         pms.setSender(false);
         template.convertAndSend(String.format("/chat/private/%s", onlineUsers.getConId(pmr.getTo()).orElse(null)), pms);
+    }
+
+    @MessageMapping("/chat/challenge")
+    public void challenge(SimpMessageHeaderAccessor sha, ChallengeReceive chr) {
+        onlineUsers.getUser(Objects.requireNonNull(sha.getUser()).getName())
+                .ifPresent(user -> {
+                    ChallengeSend chs = ChallengeSend.builder()
+                            .from(user)
+                            .build();
+                    template.convertAndSend(
+                            String.format("/chat/challenge/%s",
+                                    onlineUsers.getConId(chr.getTo()).orElse(null)),
+                            chs
+                    );
+                });
     }
 
     @MessageMapping("/chat/pokemon")

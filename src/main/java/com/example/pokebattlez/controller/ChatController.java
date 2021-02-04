@@ -62,7 +62,7 @@ public class ChatController {
 
         template.convertAndSend(String.format("/chat/private/%s", sha.getUser().getName()), pms);
         pms.setSender(false);
-        template.convertAndSend(String.format("/chat/private/%s", onlineUsers.getConId(pmr.getTo())), pms);
+        template.convertAndSend(String.format("/chat/private/%s", onlineUsers.getConId(pmr.getTo()).orElse(null)), pms);
     }
 
     @MessageMapping("/chat/pokemon")

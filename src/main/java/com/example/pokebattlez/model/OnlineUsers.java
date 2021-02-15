@@ -12,6 +12,8 @@ public class OnlineUsers {
     private static final List<User> users = new LinkedList<>();
     private static final Map<String, Long> conIdMap = new HashMap<>();
 
+    // TEST FOR PULL REQUEST
+
     private boolean hasChanged = false;
 
     private final AccountRepository accountRepository;

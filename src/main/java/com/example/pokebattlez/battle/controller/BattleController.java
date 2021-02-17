@@ -1,6 +1,7 @@
 package com.example.pokebattlez.battle.controller;
 
 import com.example.pokebattlez.battle.service.BattleService;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +16,18 @@ public class BattleController {
         this.battleService = battleService;
     }
 
-    @MessageMapping("/move")
-    public void chooseMove(@RequestParam("id") Long playerId, @RequestParam("index") Integer index) {
+    @MessageMapping("/{battleId}/move")
+    public void chooseMove(@DestinationVariable String battleId, @RequestParam("id") Long playerId, @RequestParam("index") Integer index) {
+        battleService.useMove(battleId, playerId, index);
+    }
 
+    @MessageMapping("/{battleId}/switch")
+    public void choosePokemon(@DestinationVariable String battleId, @RequestParam("id") Long playerId, @RequestParam("index") Integer index) {
+        battleService.switchPokemon(battleId, playerId, index);
+    }
+
+    @MessageMapping("/{battleId}/cancel")
+    public void cancelAction(@DestinationVariable String battleId, @RequestParam("id") Long playerId) {
+        battleService.cancelAction(battleId, playerId);
     }
 }

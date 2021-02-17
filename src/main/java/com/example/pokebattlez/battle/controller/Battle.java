@@ -28,6 +28,7 @@ public class Battle {
 
     private List<Long> waitingForTrainers;
     private List<String> turnLog;
+    private List<Long> turnOrder;
 
     public void registerPokemonTeam(Long trainerId, List<Pokemon> pokemon) {
         this.pokemon.put(trainerId, pokemon);
@@ -138,18 +139,21 @@ public class Battle {
     }
 
     private void playTurn() {
+        turnLog = new ArrayList<>();
+        turnOrder = new ArrayList<>();
+
         playerActions.stream().sorted(Comparator.comparingInt(action -> action.priority))
                 .forEachOrdered(playerAction -> {
                     playerAction.run(this);
+                    turnOrder.add(playerAction.trainerId);
                     turnLog.add("");
                 });
         // TODO Manage fainting
 
-        // TODO Call BattleService
+        battleService.sendBattleState(this);
 
 
         waitingForTrainers = List.copyOf(trainers);
-        turnLog = new ArrayList<>();
     }
 
     @Builder

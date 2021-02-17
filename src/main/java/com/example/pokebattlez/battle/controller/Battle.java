@@ -44,6 +44,10 @@ public class Battle {
             );
             waitingForTrainers.remove(trainerId);
         }
+
+        if (waitingForTrainers.size() == 0) {
+            playTurn();
+        }
     }
 
     public void registerUseMove(Long trainerId, int movePosition, Long moveTarget) {
@@ -57,6 +61,10 @@ public class Battle {
                     .build()
             );
             waitingForTrainers.remove(trainerId);
+        }
+
+        if (waitingForTrainers.size() == 0) {
+            playTurn();
         }
     }
 
@@ -130,12 +138,18 @@ public class Battle {
     }
 
     private void playTurn() {
-        turnLog = new ArrayList<>();
-
-        playerActions.stream().sorted(Comparator.comparingInt(action -> action.priority)).forEachOrdered(playerAction -> playerAction.run(this));
+        playerActions.stream().sorted(Comparator.comparingInt(action -> action.priority))
+                .forEachOrdered(playerAction -> {
+                    playerAction.run(this);
+                    turnLog.add("");
+                });
         // TODO Manage fainting
 
+        // TODO Call BattleService
+
+
         waitingForTrainers = List.copyOf(trainers);
+        turnLog = new ArrayList<>();
     }
 
     @Builder

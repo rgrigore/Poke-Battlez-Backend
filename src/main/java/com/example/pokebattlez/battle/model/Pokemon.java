@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -17,12 +16,15 @@ import static com.example.pokebattlez.battle.model.Stat.*;
 public class Pokemon {
     private static final float NATURE_MODIFIER = 0.1f;
 
+    private Long id;
     private String name;
     private int position;
 
     private int level;
     private Nature nature;
     private List<Type> types;
+
+    private int currentHp;
 
     private Map<com.example.pokebattlez.battle.model.Stat, Stat> stats = Map.of(
             HP, new Stat(Stat::calculateHp),
@@ -33,14 +35,11 @@ public class Pokemon {
             SPEED, new Stat()
     );
 
+    private List<Move> moves = new ArrayList<>();
+
     private String gender;
     private String heldItem;
     private String ability;
-
-    private String move1;
-    private String move2;
-    private String move3;
-    private String move4;
 
     public void setLevel(int level) {
         this.level = level;
@@ -57,6 +56,8 @@ public class Pokemon {
     @NoArgsConstructor
     public static class Stat {
         private int level;
+
+        private Integer value;
         private int base;
         private int iv;
         private int ev;
@@ -83,7 +84,10 @@ public class Pokemon {
         }
 
         private static int calculateHp(Stat stat) {
-            return Math.floorDiv((2 * stat.getBase() + stat.getIv() + Math.floorDiv(stat.getEv(), 4)) * stat.getLevel(), 100) + stat.getLevel() + 10;
+            return Objects.requireNonNullElseGet(stat.value, () -> {
+                stat.value = Math.floorDiv((2 * stat.getBase() + stat.getIv() + Math.floorDiv(stat.getEv(), 4)) * stat.getLevel(), 100) + stat.getLevel() + 10;
+                return stat.value;
+            });
         }
 
         private static int calculateStat(Stat stat) {

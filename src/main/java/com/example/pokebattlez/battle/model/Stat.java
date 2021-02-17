@@ -1,5 +1,5 @@
 package com.example.pokebattlez.battle.model;
 
 public enum Stat {
-    HP, ATTACK, DEFENCE, SP_ATTACK, SP_DEFENCE, SPEED
+    HP, ATTACK, DEFENCE, SPECIAL_ATTACK, SPECIAL_DEFENCE, SPEED
 }

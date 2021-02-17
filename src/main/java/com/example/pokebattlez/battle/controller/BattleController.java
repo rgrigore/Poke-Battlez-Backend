@@ -17,8 +17,8 @@ public class BattleController {
     }
 
     @MessageMapping("/{battleId}/move")
-    public void chooseMove(@DestinationVariable String battleId, @RequestParam("id") Long playerId, @RequestParam("index") Integer index) {
-        battleService.useMove(battleId, playerId, index);
+    public void chooseMove(@DestinationVariable String battleId, @RequestParam("id") Long playerId, @RequestParam("index") Integer index, @RequestParam("target") Long targetId) {
+        battleService.useMove(battleId, playerId, index, targetId);
     }
 
     @MessageMapping("/{battleId}/switch")

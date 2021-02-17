@@ -32,11 +32,12 @@ public class BattleUtils {
         return defender.getStats().get(moveCategory.getDefence()).getValue();
     }
 
+    public int getTypeModifierIndex(Type attacking, List<Type> defending) {
+        return defending.stream().mapToInt(defend -> WeaknessChart.getInstance().get(attacking).get(defend)).sum();
+    }
+
     public double calculateTypeModifier(Type attacking, List<Type> defending) {
-        int modifier = 3;
-
-        modifier += defending.stream().mapToInt(defend -> WeaknessChart.getInstance().get(attacking).get(defend)).sum();
-
+        int modifier = 3 + getTypeModifierIndex(attacking, defending);
         return TYPE_MODIFIERS[Math.max(modifier, 0)];
     }
 

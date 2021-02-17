@@ -14,8 +14,8 @@ public class BattleService {
         battles.add(battle);
     }
 
-    public void useMove(String battleId ,Long trainerId, int movePosition) {
-        findBattle(battleId).ifPresent(battle -> battle.registerUseMove(trainerId, movePosition));
+    public void useMove(String battleId ,Long trainerId, int movePosition, Long targetId) {
+        findBattle(battleId).ifPresent(battle -> battle.registerUseMove(trainerId, movePosition, targetId));
     }
 
     public void switchPokemon(String battleId, Long trainerId, int pokemonPosition) {

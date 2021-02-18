@@ -37,6 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/account-management").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/battle").setAllowedOriginPatterns("*");
         registry.addEndpoint("/chat-lobby")
                 .setHandshakeHandler(new LobbyHandshakeHandler())
                 .setAllowedOriginPatterns("*");

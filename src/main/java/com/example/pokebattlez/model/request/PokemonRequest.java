@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,16 +18,16 @@ public class PokemonRequest {
 
     private Integer ivHp;
     private Integer ivAttack;
-    private Integer ivDefence;
+    private Integer ivDefense;
     private Integer ivSpAttack;
-    private Integer ivSpDefence;
+    private Integer ivSpDefense;
     private Integer ivSpeed;
 
     private Integer evHp;
     private Integer evAttack;
-    private Integer evDefence;
+    private Integer evDefense;
     private Integer evSpAttack;
-    private Integer evSpDefence;
+    private Integer evSpDefense;
     private Integer evSpeed;
 
     private String gender;
@@ -50,15 +48,15 @@ public class PokemonRequest {
         setLevel(pokemon.getLevel());
         setIvHp(pokemon.getIvHp());
         setIvAttack(pokemon.getIvAttack());
-        setIvDefence(pokemon.getIvDefence());
+        setIvDefense(pokemon.getIvDefense());
         setIvSpAttack(pokemon.getIvSpAttack());
-        setIvSpDefence(pokemon.getIvSpDefence());
+        setIvSpDefense(pokemon.getIvSpDefense());
         setIvSpeed(pokemon.getIvSpeed());
         setEvHp(pokemon.getEvHp());
         setEvAttack(pokemon.getEvAttack());
-        setEvDefence(pokemon.getEvDefence());
+        setEvDefense(pokemon.getEvDefense());
         setEvSpAttack(pokemon.getEvSpAttack());
-        setEvSpDefence(pokemon.getEvSpDefence());
+        setEvSpDefense(pokemon.getEvSpDefense());
         setEvSpeed(pokemon.getEvSpeed());
         setGender(pokemon.getGender());
         setNature(pokemon.getNature());

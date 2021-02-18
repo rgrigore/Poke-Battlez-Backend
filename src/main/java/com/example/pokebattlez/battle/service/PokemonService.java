@@ -35,6 +35,7 @@ public class PokemonService {
         setStats(battlePokemon.getStats(), apiPokemon.stats);
         setTypes(battlePokemon, apiPokemon.types);
         setMoves(battlePokemon);
+        setSprites(battlePokemon, apiPokemon.sprites);
     }
 
     private void setStats(Map<Stat, BattlePokemon.Stat> pokemonStats, List<ApiStat> apiStats) {
@@ -74,6 +75,11 @@ public class PokemonService {
         );
     }
 
+    private void setSprites(BattlePokemon battlePokemon, Sprites sprites) {
+        battlePokemon.setFrontSprite(sprites.front_default);
+        battlePokemon.setBackSprite(sprites.back_default);
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -81,6 +87,7 @@ public class PokemonService {
     private static class ApiPokemon {
         private List<ApiStat> stats;
         private List<ApiType> types;
+        private Sprites sprites;
     }
 
     @Data
@@ -143,5 +150,14 @@ public class PokemonService {
         private static class Category {
             private String name;
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class Sprites {
+        private String back_default;
+        private String front_default;
     }
 }

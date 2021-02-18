@@ -2,7 +2,6 @@ package com.example.pokebattlez.battle.model;
 
 import com.example.pokebattlez.battle.service.PokemonService;
 import com.example.pokebattlez.model.entity.Pokemon;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,9 +47,9 @@ public class BattlePokemon {
     private Map<com.example.pokebattlez.battle.model.Stat, Stat> stats = Map.of(
             HP, new Stat(Stat::calculateHp),
             ATTACK, new Stat(),
-            DEFENCE, new Stat(),
+            DEFENSE, new Stat(),
             SPECIAL_ATTACK, new Stat(),
-            SPECIAL_DEFENCE, new Stat(),
+            SPECIAL_DEFENSE, new Stat(),
             SPEED, new Stat()
     );
 
@@ -60,6 +59,9 @@ public class BattlePokemon {
     private String gender;
     private String heldItem;
     private String ability;
+
+    private String frontSprite;
+    private String backSprite;
 
     public void setLevel(int level) {
         this.level = level;

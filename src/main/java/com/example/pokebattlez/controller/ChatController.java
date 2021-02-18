@@ -9,6 +9,8 @@ import com.example.pokebattlez.model.entity.Pokemon;
 import com.example.pokebattlez.model.entity.Team;
 import com.example.pokebattlez.model.request.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -88,15 +91,23 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/challenge/accept")
-    public void acceptChallenge(SimpMessageHeaderAccessor sha, @RequestParam("accept") boolean accept, @RequestParam("from") Long from) {
+    public void acceptChallenge(SimpMessageHeaderAccessor sha, ChallengeResponse cr) {
         onlineUsers.getUser(Objects.requireNonNull(sha.getUser()).getName())
                 .ifPresent(user -> {
-                    if (accept) {
-                        challengeService.accept(user.getId(), from);
+                    if (cr.accept) {
+                        challengeService.accept(user.getId(), cr.from);
                     } else {
-                        challengeService.decline(from);
+                        challengeService.decline(cr.from);
                     }
                 });
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class ChallengeResponse {
+        private Boolean accept;
+        private Long from;
     }
 
     @MessageMapping("/chat/pokemon")

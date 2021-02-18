@@ -24,16 +24,16 @@ public class Pokemon {
 
     @Column(nullable = false) private Integer IvHp;
     @Column(nullable = false) private Integer IvAttack;
-    @Column(nullable = false) private Integer IvDefence;
+    @Column(nullable = false) private Integer IvDefense;
     @Column(nullable = false) private Integer IvSpAttack;
-    @Column(nullable = false) private Integer IvSpDefence;
+    @Column(nullable = false) private Integer IvSpDefense;
     @Column(nullable = false) private Integer IvSpeed;
 
     @Column(nullable = false) private Integer EvHp;
     @Column(nullable = false) private Integer EvAttack;
-    @Column(nullable = false) private Integer EvDefence;
+    @Column(nullable = false) private Integer EvDefense;
     @Column(nullable = false) private Integer EvSpAttack;
-    @Column(nullable = false) private Integer EvSpDefence;
+    @Column(nullable = false) private Integer EvSpDefense;
     @Column(nullable = false) private Integer EvSpeed;
 
     @Column(nullable = false) private String gender;
@@ -57,15 +57,15 @@ public class Pokemon {
         setLevel(pokemonRequest.getLevel());
         setIvHp(pokemonRequest.getIvHp());
         setIvAttack(pokemonRequest.getIvAttack());
-        setIvDefence(pokemonRequest.getIvDefence());
+        setIvDefense(pokemonRequest.getIvDefense());
         setIvSpAttack(pokemonRequest.getIvSpAttack());
-        setIvSpDefence(pokemonRequest.getIvSpDefence());
+        setIvSpDefense(pokemonRequest.getIvSpDefense());
         setIvSpeed(pokemonRequest.getIvSpeed());
         setEvHp(pokemonRequest.getEvHp());
         setEvAttack(pokemonRequest.getEvAttack());
-        setEvDefence(pokemonRequest.getEvDefence());
+        setEvDefense(pokemonRequest.getEvDefense());
         setEvSpAttack(pokemonRequest.getEvSpAttack());
-        setEvSpDefence(pokemonRequest.getEvSpDefence());
+        setEvSpDefense(pokemonRequest.getEvSpDefense());
         setEvSpeed(pokemonRequest.getEvSpeed());
         setGender(pokemonRequest.getGender());
         setNature(pokemonRequest.getNature());
@@ -87,15 +87,15 @@ public class Pokemon {
                 .level(getLevel())
                 .ivHp(getIvHp())
                 .ivAttack(getIvAttack())
-                .ivDefence(getIvDefence())
+                .ivDefense(getIvDefense())
                 .ivSpAttack(getIvSpAttack())
-                .ivSpDefence(getIvSpDefence())
+                .ivSpDefense(getIvSpDefense())
                 .ivSpeed(getIvSpeed())
                 .evHp(getEvHp())
                 .evAttack(getEvAttack())
-                .evDefence(getEvDefence())
+                .evDefense(getEvDefense())
                 .evSpAttack(getEvSpAttack())
-                .evSpDefence(getEvSpDefence())
+                .evSpDefense(getEvSpDefense())
                 .evSpeed(getEvSpeed())
                 .gender(getGender())
                 .nature(getNature())

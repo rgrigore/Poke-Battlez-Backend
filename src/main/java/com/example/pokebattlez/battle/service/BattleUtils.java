@@ -24,12 +24,12 @@ public class BattleUtils {
         return attacker.getStats().get(moveCategory.getAttack()).getValue();
     }
 
-    public int getDefenceTypeValueForMoveCategory(BattlePokemon defender, Category moveCategory) {
+    public int getDefenseTypeValueForMoveCategory(BattlePokemon defender, Category moveCategory) {
         if (moveCategory == Category.STATUS) {
             return 0;
         }
 
-        return defender.getStats().get(moveCategory.getDefence()).getValue();
+        return defender.getStats().get(moveCategory.getDefense()).getValue();
     }
 
     public int getTypeModifierIndex(Type attacking, List<Type> defending) {

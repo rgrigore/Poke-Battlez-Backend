@@ -19,6 +19,7 @@ public class Battle {
     private UUID id = UUID.randomUUID();
 
     private final List<Long> trainers = new ArrayList<>();
+    private final List<Long> connected = new ArrayList<>();
     private final Map<Long, List<BattlePokemon>> pokemon = new HashMap<>();
     private final Map<Long, BattlePokemon> activePokemon = new HashMap<>();
     private final List<PlayerAction> playerActions = new ArrayList<>();
@@ -26,23 +27,28 @@ public class Battle {
     private BattleService battleService;
     private static final BattleUtils battleUtils = new BattleUtils(); // Ask about this
 
-    private List<Long> waitingForTrainers;
-    private List<String> turnLog;
-    private List<Long> turnOrder;
+    private List<Long> waitingForTrainers = new ArrayList<>();
+    private List<String> turnLog = new ArrayList<>();
+    private List<Long> turnOrder = new ArrayList<>();
 
-    public void registerTrainer(Long trainer) {
-        trainers.add(trainer);
-        waitingForTrainers.add(trainer);
+    public void connectTrainer(Long trainer) {
+        connected.add(trainer);
+        if (connected.containsAll(trainers)) {
+            start();
+        }
     }
 
     public void registerPokemonTeam(Long trainerId, List<BattlePokemon> battlePokemon) {
+        this.trainers.add(trainerId);
+//        this.waitingForTrainers.add(trainerId);
         this.pokemon.put(trainerId, battlePokemon);
         battlePokemon.stream().min(Comparator.comparingInt(BattlePokemon::getPosition))
                 .ifPresent(pokemon -> activePokemon.put(trainerId, pokemon));
+//        System.out.println(this.pokemon.get(trainerId));
     }
 
     public void registerSwitchPokemon(Long trainerId, int position) {
-        if (waitingForTrainers.contains(trainerId)) {
+        if (!waitingForTrainers.contains(trainerId)) {
             playerActions.add(PlayerAction.builder()
                     .trainerId(trainerId)
                     .switchToPosition(position)
@@ -50,38 +56,38 @@ public class Battle {
                     .priority(1000)
                     .build()
             );
-            waitingForTrainers.remove(trainerId);
+            waitingForTrainers.add(trainerId);
         }
 
-        if (waitingForTrainers.size() == 0) {
+        if (waitingForTrainers.containsAll(trainers)) {
             playTurn();
         }
     }
 
-    public void registerUseMove(Long trainerId, int movePosition, Long moveTarget) {
-        if (waitingForTrainers.contains(trainerId)) {
+    public void registerUseMove(Long trainerId, String moveName, Long moveTarget) {
+        if (!waitingForTrainers.contains(trainerId)) {
             playerActions.add(PlayerAction.builder()
                     .trainerId(trainerId)
-                    .moveInPosition(movePosition)
+                    .moveToUse(moveName)
                     .moveTarget(moveTarget)
                     .action(Battle::useMove)
                     .priority(activePokemon.get(trainerId).getStats().get(Stat.SPEED).getValue())
                     .build()
             );
-            waitingForTrainers.remove(trainerId);
+            waitingForTrainers.add(trainerId);
         }
 
-        if (waitingForTrainers.size() == 0) {
+        if (waitingForTrainers.containsAll(trainers)) {
             playTurn();
         }
     }
 
     public void cancelAction(Long trainerId) {
-        if (trainers.contains(trainerId) && !waitingForTrainers.contains(trainerId)) {
+        if (trainers.contains(trainerId) && waitingForTrainers.contains(trainerId)) {
             playerActions.stream()
                     .filter(playerAction -> playerAction.trainerId.equals(trainerId)).findFirst()
                     .ifPresent(playerActions::remove);
-            waitingForTrainers.add(trainerId);
+            waitingForTrainers.remove(trainerId);
         }
     }
 
@@ -105,7 +111,7 @@ public class Battle {
         BattlePokemon attacker = battle.activePokemon.get(playerAction.trainerId);
         BattlePokemon defender = battle.activePokemon.values().stream().filter(battlePokemon1 -> battlePokemon1.getId().equals(playerAction.moveTarget)).findFirst().orElse(null);
 
-        BattlePokemon.Move move = attacker.getMoves().stream().filter(move1 -> move1.getPosition() == playerAction.moveInPosition).findFirst().orElse(null);
+        BattlePokemon.Move move = attacker.getMoves().stream().filter(move1 -> move1.getName().equals(playerAction.moveToUse)).findFirst().orElse(null);
 
         if (defender != null && move != null) {
             int damage = battle.calculateDamage(attacker, defender, move);
@@ -139,16 +145,20 @@ public class Battle {
     private int calculateDamage(BattlePokemon attacker, BattlePokemon defender, BattlePokemon.Move move) {
         return (int) Math.floor((Math.floor(
                 Math.floor(
-                        (Math.floorDiv(Math.floorDiv((Math.floorDiv(attacker.getLevel() * 2, 5) + 2) * battleUtils.getAttackTypeValueForMoveCategory(attacker, move.getCategory()) * move.getPower(), battleUtils.getDefenceTypeValueForMoveCategory(defender, move.getCategory()) ), 50) + 2) * battleUtils.stabModifier(move.getType(), attacker.getTypes())
+                        (Math.floorDiv(
+                                Math.floorDiv(
+                                        (Math.floorDiv(attacker.getLevel() * 2, 5) + 2) * battleUtils.getAttackTypeValueForMoveCategory(attacker, move.getCategory()) * move.getPower(),
+                                        battleUtils.getDefenseTypeValueForMoveCategory(defender , move.getCategory())
+                                )
+                                , 50
+                        ) + 2) *
+                        battleUtils.stabModifier(move.getType(), attacker.getTypes())
                 ) *
                 battleUtils.calculateTypeModifier(move.getType(), defender.getTypes()) / 10
         ) * battleUtils.randomAttackModifier()) / 255);
     }
 
     private void playTurn() {
-        turnLog = new ArrayList<>();
-        turnOrder = new ArrayList<>();
-
         playerActions.stream().sorted(Comparator.comparingInt(action -> action.priority))
                 .forEachOrdered(playerAction -> {
                     playerAction.run(this);
@@ -159,8 +169,14 @@ public class Battle {
 
         battleService.sendBattleState(this);
 
+        turnLog = new ArrayList<>();
+        turnOrder = new ArrayList<>();
+        waitingForTrainers = new ArrayList<>();
+    }
 
-        waitingForTrainers = List.copyOf(trainers);
+    public void start() {
+        pokemon.forEach((trainer, team) -> battleService.sendTeam(this.id.toString(), trainer, team));
+        battleService.sendBattleState(this);
     }
 
     @Builder
@@ -169,7 +185,7 @@ public class Battle {
 
         private final Long trainerId;
         private final int switchToPosition;
-        private final int moveInPosition;
+        private final String moveToUse;
         private final Long moveTarget;
 
         private final BiConsumer<Battle, PlayerAction> action;

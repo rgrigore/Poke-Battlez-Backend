@@ -83,7 +83,8 @@ public class ChatController {
                                 .build();
                         template.convertAndSend(
                                 String.format("/chat/challenge/%s",
-                                        onlineUsers.getConId(chr.getTo()).orElse(null)),
+                                        onlineUsers.getConId(chr.getTo()).orElse(null)
+                                ),
                                 chs
                         );
                     }

@@ -1,7 +1,7 @@
 package com.example.pokebattlez.battle.service;
 
 import com.example.pokebattlez.battle.model.Category;
-import com.example.pokebattlez.battle.model.Pokemon;
+import com.example.pokebattlez.battle.model.BattlePokemon;
 import com.example.pokebattlez.battle.model.Type;
 import com.example.pokebattlez.battle.model.WeaknessChart;
 
@@ -16,7 +16,7 @@ public class BattleUtils {
     private static final int LOWER_RANDOM_BOUND = 217;
     private static final int UPPER_RANDOM_BOUND = 255;
 
-    public int getAttackTypeValueForMoveCategory(Pokemon attacker, Category moveCategory) {
+    public int getAttackTypeValueForMoveCategory(BattlePokemon attacker, Category moveCategory) {
         if (moveCategory == Category.STATUS) {
             return 0;
         }
@@ -24,7 +24,7 @@ public class BattleUtils {
         return attacker.getStats().get(moveCategory.getAttack()).getValue();
     }
 
-    public int getDefenceTypeValueForMoveCategory(Pokemon defender, Category moveCategory) {
+    public int getDefenceTypeValueForMoveCategory(BattlePokemon defender, Category moveCategory) {
         if (moveCategory == Category.STATUS) {
             return 0;
         }

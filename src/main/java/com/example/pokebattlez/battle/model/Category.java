@@ -2,7 +2,7 @@ package com.example.pokebattlez.battle.model;
 
 public enum Category {
     PHYSICAL(Stat.ATTACK, Stat.DEFENCE),
-    SPECIAL(Stat.SP_ATTACK, Stat.SP_DEFENCE),
+    SPECIAL(Stat.SPECIAL_ATTACK, Stat.SPECIAL_DEFENCE),
     STATUS(null, null);
 
     private final Stat attack;

@@ -1,8 +1,11 @@
 package com.example.pokebattlez.battle.service;
 
 import com.example.pokebattlez.battle.controller.Battle;
-import com.example.pokebattlez.battle.model.Pokemon;
+import com.example.pokebattlez.battle.model.BattlePokemon;
 import com.example.pokebattlez.battle.model.packet.BattleState;
+import com.example.pokebattlez.controller.repository.TeamRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +13,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BattleService {
     private final SimpMessagingTemplate template;
-    private final static List<Battle> battles = new ArrayList<>();
+    private final TeamRepository teamRepository;
+    private final PokemonService pokemonService;
 
-    public BattleService(SimpMessagingTemplate template) {
-        this.template = template;
-    }
+    private final static List<Battle> battles = new ArrayList<>();
 
     public void register(Battle battle) {
         battle.setBattleService(this);
@@ -39,6 +42,28 @@ public class BattleService {
         return battles.stream().filter(battle -> battle.getId().toString().equals(battleId)).findFirst();
     }
 
+    public String generateBattle(Long challenger, Long ... challenged) { // TODO This needs to be refactored for microservices
+        List<Long> trainers = new ArrayList<>(List.of(challenged));
+        trainers.add(challenger);
+
+        Battle battle = new Battle();
+
+        trainers.forEach(battle::registerTrainer);
+        trainers.stream().map(teamRepository::findTeamByTrainer_Id).forEach(teamOptional -> teamOptional.ifPresent(team ->
+            battle.registerPokemonTeam(
+                    team.getTrainer().getId(),
+                    team.getPokemon().stream()
+                            .map(BattlePokemon::new)
+                            .peek(battlePokemon -> battlePokemon.setPokemonService(pokemonService))
+                            .collect(Collectors.toList())
+            )
+        ));
+
+        register(battle);
+
+        return battle.getId().toString();
+    }
+
     public void sendBattleState(Battle battle) {
         Map<Long, Long> active = battle.getTrainers().stream().collect(Collectors.toMap(
                 trainer -> trainer,
@@ -47,8 +72,8 @@ public class BattleService {
 
         Map<Long, Map<Long, Integer>> currentHealths = battle.getTrainers().stream()
                 .collect(Collectors.toMap(trainer -> trainer, trainer -> new HashMap<>()));
-        battle.getPokemon().forEach((key, value) -> value.forEach(pokemon ->
-                currentHealths.get(key).put(pokemon.getId(), pokemon.getCurrentHp())
+        battle.getPokemon().forEach((key, value) -> value.forEach(battlePokemon ->
+                currentHealths.get(key).put(battlePokemon.getId(), battlePokemon.getCurrentHp())
         ));
 
         template.convertAndSend(

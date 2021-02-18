@@ -3,6 +3,7 @@ package com.example.pokebattlez.controller;
 import com.example.pokebattlez.controller.repository.AccountRepository;
 import com.example.pokebattlez.controller.repository.PokemonRepository;
 import com.example.pokebattlez.controller.repository.TeamRepository;
+import com.example.pokebattlez.controller.service.ChallengeService;
 import com.example.pokebattlez.model.OnlineUsers;
 import com.example.pokebattlez.model.entity.Pokemon;
 import com.example.pokebattlez.model.entity.Team;
@@ -15,10 +16,12 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ public class ChatController {
     private final AccountRepository accountRepository;
     private final TeamRepository teamRepository;
     private final PokemonRepository pokemonRepository;
+    private final ChallengeService challengeService;
 
     @MessageMapping("/message/lobby")
     @SendTo("/chat/lobby")
@@ -66,16 +70,32 @@ public class ChatController {
 
     @MessageMapping("/chat/challenge")
     public void challenge(SimpMessageHeaderAccessor sha, ChallengeReceive chr) {
+
         onlineUsers.getUser(Objects.requireNonNull(sha.getUser()).getName())
                 .ifPresent(user -> {
-                    ChallengeSend chs = ChallengeSend.builder()
-                            .from(user)
-                            .build();
-                    template.convertAndSend(
-                            String.format("/chat/challenge/%s",
-                                    onlineUsers.getConId(chr.getTo()).orElse(null)),
-                            chs
-                    );
+                    if (!challengeService.hasActiveChallenge(user.getId())) {
+                        challengeService.register(user.getId(), chr.getTo());
+                        ChallengeSend chs = ChallengeSend.builder()
+                                .from(user)
+                                .build();
+                        template.convertAndSend(
+                                String.format("/chat/challenge/%s",
+                                        onlineUsers.getConId(chr.getTo()).orElse(null)),
+                                chs
+                        );
+                    }
+                });
+    }
+
+    @MessageMapping("/chat/challenge/accept")
+    public void acceptChallenge(SimpMessageHeaderAccessor sha, @RequestParam("accept") boolean accept, @RequestParam("from") Long from) {
+        onlineUsers.getUser(Objects.requireNonNull(sha.getUser()).getName())
+                .ifPresent(user -> {
+                    if (accept) {
+                        challengeService.accept(user.getId(), from);
+                    } else {
+                        challengeService.decline(from);
+                    }
                 });
     }
 

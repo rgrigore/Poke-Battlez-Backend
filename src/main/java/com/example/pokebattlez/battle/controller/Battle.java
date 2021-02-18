@@ -1,6 +1,6 @@
 package com.example.pokebattlez.battle.controller;
 
-import com.example.pokebattlez.battle.model.Pokemon;
+import com.example.pokebattlez.battle.model.BattlePokemon;
 import com.example.pokebattlez.battle.model.Stat;
 import com.example.pokebattlez.battle.service.BattleService;
 import com.example.pokebattlez.battle.service.BattleUtils;
@@ -16,11 +16,11 @@ public class Battle {
     private static final String MOVE_USED_LOG = "%s used %s!";
     private static final String LOST_HP_LOG = "%s lost %d HP!(%d%% of it's health)";
 
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     private final List<Long> trainers = new ArrayList<>();
-    private final Map<Long, List<Pokemon>> pokemon = new HashMap<>();
-    private final Map<Long, Pokemon> activePokemon = new HashMap<>();
+    private final Map<Long, List<BattlePokemon>> pokemon = new HashMap<>();
+    private final Map<Long, BattlePokemon> activePokemon = new HashMap<>();
     private final List<PlayerAction> playerActions = new ArrayList<>();
 
     private BattleService battleService;
@@ -30,8 +30,15 @@ public class Battle {
     private List<String> turnLog;
     private List<Long> turnOrder;
 
-    public void registerPokemonTeam(Long trainerId, List<Pokemon> pokemon) {
-        this.pokemon.put(trainerId, pokemon);
+    public void registerTrainer(Long trainer) {
+        trainers.add(trainer);
+        waitingForTrainers.add(trainer);
+    }
+
+    public void registerPokemonTeam(Long trainerId, List<BattlePokemon> battlePokemon) {
+        this.pokemon.put(trainerId, battlePokemon);
+        battlePokemon.stream().min(Comparator.comparingInt(BattlePokemon::getPosition))
+                .ifPresent(pokemon -> activePokemon.put(trainerId, pokemon));
     }
 
     public void registerSwitchPokemon(Long trainerId, int position) {
@@ -84,8 +91,8 @@ public class Battle {
         ));
 
         battle.pokemon.get(playerAction.trainerId).stream()
-                .filter(pokemon1 -> pokemon1.getPosition() == playerAction.switchToPosition).findFirst()
-                .ifPresent(pokemon1 -> battle.activePokemon.replace(playerAction.trainerId, pokemon1));
+                .filter(battlePokemon1 -> battlePokemon1.getPosition() == playerAction.switchToPosition).findFirst()
+                .ifPresent(battlePokemon1 -> battle.activePokemon.replace(playerAction.trainerId, battlePokemon1));
 
         battle.turnLog.add(String.format("Sent out %s!",
                 battle.activePokemon.get(playerAction.trainerId).getName()
@@ -95,10 +102,10 @@ public class Battle {
     }
 
     private static void useMove(Battle battle, PlayerAction playerAction) {
-        Pokemon attacker = battle.activePokemon.get(playerAction.trainerId);
-        Pokemon defender = battle.activePokemon.values().stream().filter(pokemon1 -> pokemon1.getId().equals(playerAction.moveTarget)).findFirst().orElse(null);
+        BattlePokemon attacker = battle.activePokemon.get(playerAction.trainerId);
+        BattlePokemon defender = battle.activePokemon.values().stream().filter(battlePokemon1 -> battlePokemon1.getId().equals(playerAction.moveTarget)).findFirst().orElse(null);
 
-        Pokemon.Move move = attacker.getMoves().stream().filter(move1 -> move1.getPosition() == playerAction.moveInPosition).findFirst().orElse(null);
+        BattlePokemon.Move move = attacker.getMoves().stream().filter(move1 -> move1.getPosition() == playerAction.moveInPosition).findFirst().orElse(null);
 
         if (defender != null && move != null) {
             int damage = battle.calculateDamage(attacker, defender, move);
@@ -129,7 +136,7 @@ public class Battle {
         battle.playerActions.remove(playerAction);
     }
 
-    private int calculateDamage(Pokemon attacker, Pokemon defender, Pokemon.Move move) {
+    private int calculateDamage(BattlePokemon attacker, BattlePokemon defender, BattlePokemon.Move move) {
         return (int) Math.floor((Math.floor(
                 Math.floor(
                         (Math.floorDiv(Math.floorDiv((Math.floorDiv(attacker.getLevel() * 2, 5) + 2) * battleUtils.getAttackTypeValueForMoveCategory(attacker, move.getCategory()) * move.getPower(), battleUtils.getDefenceTypeValueForMoveCategory(defender, move.getCategory()) ), 50) + 2) * battleUtils.stabModifier(move.getType(), attacker.getTypes())

@@ -1,20 +1,22 @@
 package com.example.pokebattlez.battle.model;
 
+import com.example.pokebattlez.battle.service.PokemonService;
+import com.example.pokebattlez.model.entity.Pokemon;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 import static com.example.pokebattlez.battle.model.Stat.*;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Pokemon {
+public class BattlePokemon {
     private static final float NATURE_MODIFIER = 0.1f;
+
+    private PokemonService pokemonService;
 
     private Long id;
     private String name;
@@ -26,15 +28,33 @@ public class Pokemon {
 
     private int currentHp;
 
+    public BattlePokemon(Pokemon pokemon) {
+        id = pokemon.getId();
+        name = pokemon.getName();
+        position = pokemon.getPosition();
+        gender = pokemon.getGender();
+        heldItem = pokemon.getHeldItem();
+        ability = pokemon.getAbility();
+
+        setLevel(pokemon.getLevel());
+        setNature(Nature.valueOf(pokemon.getNature().toUpperCase()));
+
+        moveNames.put(0, pokemon.getMove1());
+        moveNames.put(1, pokemon.getMove2());
+        moveNames.put(2, pokemon.getMove3());
+        moveNames.put(3, pokemon.getMove4());
+    }
+
     private Map<com.example.pokebattlez.battle.model.Stat, Stat> stats = Map.of(
             HP, new Stat(Stat::calculateHp),
             ATTACK, new Stat(),
             DEFENCE, new Stat(),
-            SP_ATTACK, new Stat(),
-            SP_DEFENCE, new Stat(),
+            SPECIAL_ATTACK, new Stat(),
+            SPECIAL_DEFENCE, new Stat(),
             SPEED, new Stat()
     );
 
+    private Map<Integer, String> moveNames = new HashMap<>();
     private List<Move> moves = new ArrayList<>();
 
     private String gender;
@@ -50,6 +70,16 @@ public class Pokemon {
         this.nature = nature;
         stats.get(nature.getUp()).modifyNature(NATURE_MODIFIER);
         stats.get(nature.getDown()).modifyNature(-NATURE_MODIFIER);
+    }
+
+    public void setPokemonService(PokemonService pokemonService) {
+        this.pokemonService = pokemonService;
+        pokemonService.getApiData(this);
+        currentHp = stats.get(HP).getValue();
+    }
+
+    public void registerMove(Move move) {
+        moves.add(move);
     }
 
     @Data
@@ -96,8 +126,7 @@ public class Pokemon {
     }
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @Builder
     public static class Move {
         private String name;
 

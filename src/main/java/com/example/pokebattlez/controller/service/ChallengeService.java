@@ -1,14 +1,19 @@
 package com.example.pokebattlez.controller.service;
 
 import com.example.pokebattlez.battle.service.BattleService;
+import com.example.pokebattlez.controller.repository.TeamRepository;
+import com.example.pokebattlez.model.OnlineUsers;
+import com.example.pokebattlez.model.entity.Pokemon;
+import com.example.pokebattlez.model.entity.Team;
+import com.example.pokebattlez.model.request.User;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -16,6 +21,8 @@ public class ChallengeService {
 
     private final BattleService battleService;
     private final SimpMessagingTemplate template;
+    private final OnlineUsers onlineUsers;
+    private final TeamRepository teamRepository;
 
     private final List<Challenge> challenges = new ArrayList<>();
 
@@ -42,9 +49,31 @@ public class ChallengeService {
                 .ifPresent(challenges::remove);
     }
 
-    private void startBattle(Challenge challenge) {
+    private void startBattle(Challenge challenge) { // TODO Check if all trainers are still online
         String id = battleService.generateBattle(challenge.challenger, challenge.challenged.toArray(new Long[0]));
-//        template.convertAndSend();
+
+        List<String> connections = challenge.challenged.stream().map(challenged1 -> onlineUsers.getConId(challenged1).orElse(null)).collect(Collectors.toList());
+        connections.add(onlineUsers.getConId(challenge.challenger).orElse(null));
+
+        BattleData battleData = new BattleData(id);
+        connections.stream().filter(Objects::nonNull).forEach(connection ->
+                onlineUsers.getUser(connection).ifPresent(user -> {
+                    battleData.trainers.add(user.getId());
+                    battleData.trainerNames.put(user.getId(), user.getName());
+                    teamRepository.findTeamByTrainer_Id(user.getId()).stream()
+                            .peek(team -> battleData.trainerTeams.put(user.getId(), team.getId()))
+                            .map(Team::getPokemon).forEach(team ->
+                                    battleData.availablePokemon.put(user.getId(), team.stream()
+                                            .map(Pokemon::getPosition)
+                                            .collect(Collectors.toList())
+                                    )
+                            );
+                })
+        );
+
+        connections.forEach(connection ->
+                template.convertAndSend(String.format("/battle/start/%s", connection), battleData)
+        );
     }
 
     @AllArgsConstructor
@@ -59,9 +88,16 @@ public class ChallengeService {
         }
     }
 
+    @Data
     private static class BattleData {
-        private List<Long> trainers;
-        private Map<Long, String> trainerNames;
-        private Map<Long, List<Integer>> availablePokemon;
+        private String battleId;
+        private List<Long> trainers = new ArrayList<>();
+        private Map<Long, String> trainerNames = new HashMap<>();
+        private Map<Long, Long> trainerTeams = new HashMap<>();
+        private Map<Long, List<Integer>> availablePokemon = new HashMap<>();
+
+        public BattleData(String battleId) {
+            this.battleId = battleId;
+        }
     }
 }

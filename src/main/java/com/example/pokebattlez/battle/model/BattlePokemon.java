@@ -93,8 +93,8 @@ public class BattlePokemon {
         private int base;
         private int iv;
         private int ev;
-        private int nature = 1;
-        private int status = 1;
+        private double nature = 1;
+        private double status = 1;
 
         private Function<Stat ,Integer> formula = Stat::calculateStat;
 

@@ -73,7 +73,7 @@ public class JwtTokenService {
 
     public Authentication parseUserFromTokenInfo(String token) throws UsernameNotFoundException {
         Claims body = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-        String username = body.getSubject(); // Verify if user still exists in DB
+        String username = body.getSubject(); //TODO Verify if user still exists in DB
         List<String> roles = (List<String>) body.get(rolesFieldName);
         List<SimpleGrantedAuthority> authorities = new LinkedList<>();
         for (String role : roles) {

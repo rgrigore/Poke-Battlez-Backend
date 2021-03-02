@@ -5,7 +5,9 @@ import com.example.pokebattlez.controller.repository.TeamRepository;
 import com.example.pokebattlez.model.OnlineUsers;
 import com.example.pokebattlez.model.entity.Pokemon;
 import com.example.pokebattlez.model.entity.Team;
-import com.example.pokebattlez.model.request.User;
+import com.example.pokebattlez.model.request.ChallengeReceive;
+import com.example.pokebattlez.model.request.ChallengeResponse;
+import com.example.pokebattlez.model.request.ChallengeSend;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,32 @@ public class ChallengeService {
         return challenges.stream().anyMatch(challenge -> challenge.challenger.equals(user));
     }
 
-    public void accept(Long user, Long from) {
+    public void sendChallenge(String sender, ChallengeReceive chr) {
+        onlineUsers.getUser(sender).ifPresent(user -> {
+            if (!hasActiveChallenge(user.getId())) {
+                register(user.getId(), chr.getTo());
+
+                ChallengeSend chs = ChallengeSend.builder().from(user).build();
+
+                template.convertAndSend(
+                        String.format("/chat/challenge/%s", onlineUsers.getConId(chr.getTo()).orElse(null)),
+                        chs
+                );
+            }
+        });
+    }
+
+    public void respond(String responder, ChallengeResponse cr) {
+        onlineUsers.getUser(responder).ifPresent(user -> {
+            if (cr.getAccept()) {
+                accept(user.getId(), cr.getFrom());
+            } else {
+                decline(cr.getFrom());
+            }
+        });
+    }
+
+    private void accept(Long user, Long from) {
         challenges.stream().filter(challenge -> challenge.challenger.equals(from)).findFirst().ifPresent(challenge -> {
             challenge.accepts.add(user);
             if (challenge.isAccepted()) {
@@ -46,7 +73,7 @@ public class ChallengeService {
         });
     }
 
-    public void decline(Long from) {
+    private void decline(Long from) {
         challenges.stream().filter(challenge -> challenge.challenger.equals(from)).findFirst()
                 .ifPresent(challenges::remove);
     }
@@ -73,13 +100,10 @@ public class ChallengeService {
                 })
         );
 
-//        System.out.println(connections);
         connections.forEach(connection -> {
-            System.out.printf("/battle/start/%s%n", connection);
+//            System.out.printf("/battle/start/%s%n", connection);
             template.convertAndSend(String.format("/battle/start/%s", connection), battleData);
         });
-
-//        battleService.startBattle(battleId);
     }
 
     @AllArgsConstructor

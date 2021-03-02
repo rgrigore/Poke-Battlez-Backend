@@ -44,13 +44,13 @@ public class BattlePokemon {
         moveNames.put(3, pokemon.getMove4());
     }
 
-    private Map<com.example.pokebattlez.battle.model.Stat, Stat> stats = Map.of(
-            HP, new Stat(Stat::calculateHp),
-            ATTACK, new Stat(),
-            DEFENSE, new Stat(),
-            SPECIAL_ATTACK, new Stat(),
-            SPECIAL_DEFENSE, new Stat(),
-            SPEED, new Stat()
+    private Map<Stat, StatData> stats = Map.of(
+            HP, new StatData(StatData::calculateHp),
+            ATTACK, new StatData(),
+            DEFENSE, new StatData(),
+            SPECIAL_ATTACK, new StatData(),
+            SPECIAL_DEFENSE, new StatData(),
+            SPEED, new StatData()
     );
 
     private Map<Integer, String> moveNames = new HashMap<>();
@@ -65,7 +65,7 @@ public class BattlePokemon {
 
     public void setLevel(int level) {
         this.level = level;
-        stats.values().forEach(stat -> stat.setLevel(level));
+        stats.values().forEach(statData -> statData.setLevel(level));
     }
 
     public void setNature(Nature nature) {
@@ -86,7 +86,7 @@ public class BattlePokemon {
 
     @Data
     @NoArgsConstructor
-    public static class Stat {
+    public static class StatData {
         private int level;
 
         private Integer value;
@@ -96,9 +96,9 @@ public class BattlePokemon {
         private double nature = 1;
         private double status = 1;
 
-        private Function<Stat ,Integer> formula = Stat::calculateStat;
+        private Function<StatData,Integer> formula = StatData::calculateStat;
 
-        private Stat(Function<Stat, Integer> formula) {
+        private StatData(Function<StatData, Integer> formula) {
             this.formula = formula;
         }
 
@@ -115,15 +115,15 @@ public class BattlePokemon {
             return 0;
         }
 
-        private static int calculateHp(Stat stat) {
-            return Objects.requireNonNullElseGet(stat.value, () -> {
-                stat.value = Math.floorDiv((2 * stat.getBase() + stat.getIv() + Math.floorDiv(stat.getEv(), 4)) * stat.getLevel(), 100) + stat.getLevel() + 10;
-                return stat.value;
+        private static int calculateHp(StatData statData) {
+            return Objects.requireNonNullElseGet(statData.value, () -> {
+                statData.value = Math.floorDiv((2 * statData.getBase() + statData.getIv() + Math.floorDiv(statData.getEv(), 4)) * statData.getLevel(), 100) + statData.getLevel() + 10;
+                return statData.value;
             });
         }
 
-        private static int calculateStat(Stat stat) {
-            return (int) Math.floor((Math.floorDiv((2 * stat.getBase() + stat.getIv() + Math.floorDiv(stat.getEv(), 4)) * stat.getLevel(), 100) + 5) * stat.getNature());
+        private static int calculateStat(StatData statData) {
+            return (int) Math.floor((Math.floorDiv((2 * statData.getBase() + statData.getIv() + Math.floorDiv(statData.getEv(), 4)) * statData.getLevel(), 100) + 5) * statData.getNature());
         }
     }
 

@@ -38,7 +38,7 @@ public class PokemonService {
         setSprites(battlePokemon, apiPokemon.sprites);
     }
 
-    private void setStats(Map<Stat, BattlePokemon.Stat> pokemonStats, List<ApiStat> apiStats) {
+    private void setStats(Map<Stat, BattlePokemon.StatData> pokemonStats, List<ApiStat> apiStats) {
         apiStats.forEach(apiStat ->
                 pokemonStats
                         .get(Stat.valueOf(apiStat.stat.name.toUpperCase().replace('-', '_')))

@@ -1,7 +1,10 @@
 package com.example.pokebattlez.model.entity;
 
 import com.example.pokebattlez.model.request.PokemonRequest;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -46,8 +49,12 @@ public class Pokemon {
     @Column(nullable = false) private String move3;
     @Column(nullable = false) private String move4;
 
-    public Pokemon(PokemonRequest pokemonRequest) {
+    private Pokemon(PokemonRequest pokemonRequest) {
         updateFields(pokemonRequest);
+    }
+
+    public static Pokemon from(PokemonRequest pokemonRequest) {
+        return new Pokemon(pokemonRequest);
     }
 
     @Transient

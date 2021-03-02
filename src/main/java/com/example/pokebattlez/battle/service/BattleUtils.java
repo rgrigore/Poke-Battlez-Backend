@@ -1,7 +1,7 @@
 package com.example.pokebattlez.battle.service;
 
-import com.example.pokebattlez.battle.model.Category;
 import com.example.pokebattlez.battle.model.BattlePokemon;
+import com.example.pokebattlez.battle.model.Category;
 import com.example.pokebattlez.battle.model.Type;
 import com.example.pokebattlez.battle.model.WeaknessChart;
 

@@ -14,4 +14,9 @@ public class PrivateMessageSend {
     private User from;
     private User to;
     private String body;
+
+    public PrivateMessageSend sender(boolean sender) {
+        this.sender = sender;
+        return this;
+    }
 }

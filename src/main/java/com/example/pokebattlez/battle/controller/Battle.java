@@ -148,13 +148,11 @@ public class Battle {
                         (Math.floorDiv(
                                 Math.floorDiv(
                                         (Math.floorDiv(attacker.getLevel() * 2, 5) + 2) * battleUtils.getAttackTypeValueForMoveCategory(attacker, move.getCategory()) * move.getPower(),
-                                        battleUtils.getDefenseTypeValueForMoveCategory(defender , move.getCategory())
-                                )
-                                , 50
-                        ) + 2) *
-                        battleUtils.stabModifier(move.getType(), attacker.getTypes())
-                ) *
-                battleUtils.calculateTypeModifier(move.getType(), defender.getTypes()) / 10
+                                        battleUtils.getDefenseTypeValueForMoveCategory(defender, move.getCategory())
+                                ),
+                                50
+                        ) + 2) * battleUtils.stabModifier(move.getType(), attacker.getTypes())
+                ) * (battleUtils.calculateTypeModifier(move.getType(), defender.getTypes()) / 10)
         ) * battleUtils.randomAttackModifier()) / 255);
     }
 

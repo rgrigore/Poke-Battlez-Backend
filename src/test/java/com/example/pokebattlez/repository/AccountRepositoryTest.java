@@ -75,6 +75,19 @@ public class AccountRepositoryTest {
     }
 
     @Test
+    public void getUserByUsername() {
+        populateUsers();
+        Account expected = Account.builder()
+                .username("account1")
+                .email("account1@gmail.com")
+                .password("account1")
+                .build();
+        String username = accountRepository.findAccountByUsername("account1").map(Account::getUsername).orElse(null);
+        assertThat(username).isEqualTo(expected.getUsername());
+        accountRepository.deleteAll();
+    }
+
+    @Test
     public void returnUserFromAccount() {
         populateUsers();
         User expected = User.builder().name("account3").build();

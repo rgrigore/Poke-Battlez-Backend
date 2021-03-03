@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -25,6 +27,10 @@ public class Account {
     private String username;
     @Column(nullable = false)
     private String password;
+
+    @ElementCollection
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 
     @Transient
     public User generateUser() {

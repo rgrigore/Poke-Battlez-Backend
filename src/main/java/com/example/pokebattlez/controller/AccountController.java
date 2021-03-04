@@ -7,6 +7,7 @@ import com.example.pokebattlez.model.request.LoginForm;
 import com.example.pokebattlez.model.request.RegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +19,14 @@ public class AccountController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public AccountConfirmation register(@RequestBody RegisterForm form) {
+    public ResponseEntity<AccountConfirmation> register(@RequestBody RegisterForm form) {
         Account account = service.generateAccount(form);
-
-        return service.registerAccount(account);
+        LoginForm logForm = LoginForm.builder().email(account.getEmail()).password(form.getPassword()).build();
+        return service.loginAccount(logForm);
     }
 
     @PostMapping("/login")
-    public AccountConfirmation login(@RequestBody LoginForm form) {
+    public ResponseEntity<AccountConfirmation> login(@RequestBody LoginForm form) {
         return service.loginAccount(form);
     }
 }

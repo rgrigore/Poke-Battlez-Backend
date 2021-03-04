@@ -55,11 +55,9 @@ public class AuthenticationService {
                 account = accountOptional.get();
             }
 
-            System.out.println(account.toString()); //Print
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(account.getUsername(), psw)
             );
-            System.out.println(authentication);//Print
 
             List<String> roles = authentication.getAuthorities()
                     .stream()
@@ -76,8 +74,6 @@ public class AuthenticationService {
                         .token(token)
                         .state(true)
                         .build();
-
-            System.out.println(response.toString());
 
         } catch (UsernameNotFoundException e) {
             throw new BadCredentialsException("Invalid username/password supplied");

@@ -19,7 +19,6 @@ public class BattleController {
 
     @MessageMapping("/{battleId}/move")
     public void chooseMove(@DestinationVariable String battleId, Request request) {
-        System.out.println(request);
         battleService.useMove(battleId, request.playerId, request.move, request.targetId);
     }
 

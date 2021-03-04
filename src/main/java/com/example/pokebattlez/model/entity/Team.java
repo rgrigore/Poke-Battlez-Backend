@@ -31,5 +31,15 @@ public class Team {
     @Transient
     public void addPokemon(Pokemon pokemon) {
         this.pokemon.add(pokemon);
+        pokemon.setTeam(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", trainer=" + trainer.getId() +
+                ", pokemon=" + pokemon +
+                '}';
     }
 }

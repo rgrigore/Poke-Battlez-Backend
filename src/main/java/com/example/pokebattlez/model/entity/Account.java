@@ -36,4 +36,15 @@ public class Account {
     public User generateUser() {
         return new User(this.id, this.username);
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }

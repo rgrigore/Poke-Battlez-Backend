@@ -114,4 +114,35 @@ public class Pokemon {
                 .move4(getMove4())
                 .build();
     }
+
+    @Override
+    public String toString() {
+        return "Pokemon{" +
+                "id=" + id +
+                ", team=" + team.getId() +
+                ", position=" + position +
+                ", name='" + name + '\'' +
+                ", level=" + level +
+                ", IvHp=" + IvHp +
+                ", IvAttack=" + IvAttack +
+                ", IvDefense=" + IvDefense +
+                ", IvSpAttack=" + IvSpAttack +
+                ", IvSpDefense=" + IvSpDefense +
+                ", IvSpeed=" + IvSpeed +
+                ", EvHp=" + EvHp +
+                ", EvAttack=" + EvAttack +
+                ", EvDefense=" + EvDefense +
+                ", EvSpAttack=" + EvSpAttack +
+                ", EvSpDefense=" + EvSpDefense +
+                ", EvSpeed=" + EvSpeed +
+                ", gender='" + gender + '\'' +
+                ", nature='" + nature + '\'' +
+                ", heldItem='" + heldItem + '\'' +
+                ", ability='" + ability + '\'' +
+                ", move1='" + move1 + '\'' +
+                ", move2='" + move2 + '\'' +
+                ", move3='" + move3 + '\'' +
+                ", move4='" + move4 + '\'' +
+                '}';
+    }
 }

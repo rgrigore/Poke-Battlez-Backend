@@ -117,8 +117,6 @@ public class BattleService {
         String route = String.format("/battle/%s/team/%s", battleId, trainerId);
         List<BasicPokemon> basicPokemon = pokemon.stream().map(BasicPokemon::new).collect(Collectors.toList());
 
-        System.out.println(route);
-
         template.convertAndSend(
                 route,
                 basicPokemon

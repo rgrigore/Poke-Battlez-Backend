@@ -40,11 +40,9 @@ public class Battle {
 
     public void registerPokemonTeam(Long trainerId, List<BattlePokemon> battlePokemon) {
         this.trainers.add(trainerId);
-//        this.waitingForTrainers.add(trainerId);
         this.pokemon.put(trainerId, battlePokemon);
         battlePokemon.stream().min(Comparator.comparingInt(BattlePokemon::getPosition))
                 .ifPresent(pokemon -> activePokemon.put(trainerId, pokemon));
-//        System.out.println(this.pokemon.get(trainerId));
     }
 
     public void registerSwitchPokemon(Long trainerId, int position) {

@@ -51,7 +51,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (accessor != null && StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
                     if (Objects.equals(accessor.getDestination(), "/chat/lobby/users")) {
-                        System.out.println(accessor.getUser().getName()); // TODO Remove this
+//                        System.out.println(accessor.getUser().getName()); // TODO Remove this
                         onlineUsers.addUser(
                             Integer.parseInt(Objects.requireNonNull(accessor.getFirstNativeHeader("user"))),
                             Objects.requireNonNull(accessor.getUser()).getName()

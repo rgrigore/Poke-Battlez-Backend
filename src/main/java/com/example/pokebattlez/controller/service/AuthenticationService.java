@@ -5,56 +5,84 @@ import com.example.pokebattlez.model.entity.Account;
 import com.example.pokebattlez.model.request.AccountConfirmation;
 import com.example.pokebattlez.model.request.LoginForm;
 import com.example.pokebattlez.model.request.RegisterForm;
+import com.example.pokebattlez.security.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthenticationService {
 
     private final AccountRepository repository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenService jwtTokenService;
 
     public Account generateAccount(RegisterForm form) {
-        return Account.builder()
+        Account newAccount = Account.builder()
                 .email(form.getEmail())
                 .username(form.getUsername())
-                .password(form.getPassword())
+                .password(BCrypt.hashpw(form.getPassword(), BCrypt.gensalt(12)))
+                .roles(Arrays.asList("ROLE_USER"))
                 .build();
+        repository.save(newAccount);
+        return newAccount;
     }
 
-    public AccountConfirmation registerAccount(Account account) {
+    public ResponseEntity<AccountConfirmation> loginAccount(LoginForm form) {
+        AccountConfirmation response = AccountConfirmation.builder().state(false).build();
+
         try {
-            repository.save(account);
+            String email = form.getEmail();
+            String psw = form.getPassword();
 
-            return AccountConfirmation.builder()
-                    .id(account.getId())
-                    .username(account.getUsername())
-                    .state(true)
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            Optional<Account> accountOptional = repository.findAccountByEmail(form.getEmail());
+            Account account = Account.builder().build();
+            if (accountOptional.isPresent()) {
+                account = accountOptional.get();
+            }
 
-        return AccountConfirmation.builder().state(false).build();
-    }
+            System.out.println(account.toString()); //Print
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(account.getUsername(), psw)
+            );
+            System.out.println(authentication);//Print
 
-    public AccountConfirmation loginAccount(LoginForm form) {
-        Optional<Account> accountOptional = repository.findAccountByEmail(form.getEmail());
+            List<String> roles = authentication.getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
 
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
-            if (account.getPassword().equals(form.getPassword())) {
-                return AccountConfirmation.builder()
+            String token = jwtTokenService.createToken(account.getUsername(), roles);
+
+            response = AccountConfirmation.builder()
                         .id(account.getId())
                         .username(account.getUsername())
+                        .email(email)
+                        .roles(roles)
+                        .token(token)
                         .state(true)
                         .build();
-            }
+
+            System.out.println(response.toString());
+
+        } catch (UsernameNotFoundException e) {
+            throw new BadCredentialsException("Invalid username/password supplied");
         }
 
-        return AccountConfirmation.builder().state(false).build();
+        return ResponseEntity.ok(response);
     }
 }

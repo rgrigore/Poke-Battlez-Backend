@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class TeamRequest {
     private Long teamId;
-    private List<PokemonRequest> pokemon;
+    private List<PokemonDTO> pokemon;
 }

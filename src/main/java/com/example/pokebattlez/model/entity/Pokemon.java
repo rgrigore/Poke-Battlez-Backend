@@ -1,6 +1,6 @@
 package com.example.pokebattlez.model.entity;
 
-import com.example.pokebattlez.model.request.PokemonRequest;
+import com.example.pokebattlez.model.request.PokemonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,44 +49,44 @@ public class Pokemon {
     @Column(nullable = false) private String move3;
     @Column(nullable = false) private String move4;
 
-    private Pokemon(PokemonRequest pokemonRequest) {
-        updateFields(pokemonRequest);
+    private Pokemon(PokemonDTO pokemonDTO) {
+        updateFields(pokemonDTO);
     }
 
-    public static Pokemon from(PokemonRequest pokemonRequest) {
-        return new Pokemon(pokemonRequest);
-    }
-
-    @Transient
-    public void updateFields(PokemonRequest pokemonRequest) {
-        setPosition(pokemonRequest.getPosition());
-        setName(pokemonRequest.getName());
-        setLevel(pokemonRequest.getLevel());
-        setIvHp(pokemonRequest.getIvHp());
-        setIvAttack(pokemonRequest.getIvAttack());
-        setIvDefense(pokemonRequest.getIvDefense());
-        setIvSpAttack(pokemonRequest.getIvSpAttack());
-        setIvSpDefense(pokemonRequest.getIvSpDefense());
-        setIvSpeed(pokemonRequest.getIvSpeed());
-        setEvHp(pokemonRequest.getEvHp());
-        setEvAttack(pokemonRequest.getEvAttack());
-        setEvDefense(pokemonRequest.getEvDefense());
-        setEvSpAttack(pokemonRequest.getEvSpAttack());
-        setEvSpDefense(pokemonRequest.getEvSpDefense());
-        setEvSpeed(pokemonRequest.getEvSpeed());
-        setGender(pokemonRequest.getGender());
-        setNature(pokemonRequest.getNature());
-        setHeldItem(pokemonRequest.getHeldItem());
-        setAbility(pokemonRequest.getAbility());
-        setMove1(pokemonRequest.getMove1());
-        setMove2(pokemonRequest.getMove2());
-        setMove3(pokemonRequest.getMove3());
-        setMove4(pokemonRequest.getMove4());
+    public static Pokemon from(PokemonDTO pokemonDTO) {
+        return new Pokemon(pokemonDTO);
     }
 
     @Transient
-    public PokemonRequest generateRequest() {
-        return PokemonRequest.builder()
+    public void updateFields(PokemonDTO pokemonDTO) {
+        setPosition(pokemonDTO.getPosition());
+        setName(pokemonDTO.getName());
+        setLevel(pokemonDTO.getLevel());
+        setIvHp(pokemonDTO.getIvHp());
+        setIvAttack(pokemonDTO.getIvAttack());
+        setIvDefense(pokemonDTO.getIvDefense());
+        setIvSpAttack(pokemonDTO.getIvSpAttack());
+        setIvSpDefense(pokemonDTO.getIvSpDefense());
+        setIvSpeed(pokemonDTO.getIvSpeed());
+        setEvHp(pokemonDTO.getEvHp());
+        setEvAttack(pokemonDTO.getEvAttack());
+        setEvDefense(pokemonDTO.getEvDefense());
+        setEvSpAttack(pokemonDTO.getEvSpAttack());
+        setEvSpDefense(pokemonDTO.getEvSpDefense());
+        setEvSpeed(pokemonDTO.getEvSpeed());
+        setGender(pokemonDTO.getGender());
+        setNature(pokemonDTO.getNature());
+        setHeldItem(pokemonDTO.getHeldItem());
+        setAbility(pokemonDTO.getAbility());
+        setMove1(pokemonDTO.getMove1());
+        setMove2(pokemonDTO.getMove2());
+        setMove3(pokemonDTO.getMove3());
+        setMove4(pokemonDTO.getMove4());
+    }
+
+    @Transient
+    public PokemonDTO generateRequest() {
+        return PokemonDTO.builder()
                 .id(getId())
                 .teamId(getTeam().getId())
                 .position(getPosition())

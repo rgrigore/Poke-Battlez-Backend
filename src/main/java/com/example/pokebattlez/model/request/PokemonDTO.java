@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PokemonRequest {
+public class PokemonDTO {
     private long id;
     private long teamId;
     private int position;
@@ -40,7 +40,7 @@ public class PokemonRequest {
     private String move3;
     private String move4;
 
-    public PokemonRequest(com.example.pokebattlez.model.entity.Pokemon pokemon) {
+    public PokemonDTO(com.example.pokebattlez.model.entity.Pokemon pokemon) {
         setId(pokemon.getId());
         setTeamId(pokemon.getTeam().getId());
         setPosition(pokemon.getPosition());

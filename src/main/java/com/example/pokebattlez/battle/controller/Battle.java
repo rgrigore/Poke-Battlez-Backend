@@ -107,7 +107,8 @@ public class Battle {
 
     private static void useMove(Battle battle, PlayerAction playerAction) {
         BattlePokemon attacker = battle.activePokemon.get(playerAction.trainerId);
-        BattlePokemon defender = battle.activePokemon.values().stream().filter(battlePokemon1 -> battlePokemon1.getId().equals(playerAction.moveTarget)).findFirst().orElse(null);
+        BattlePokemon defender = battle.activePokemon.entrySet().stream().filter(entry -> !entry.getKey().equals(playerAction.trainerId)).findFirst().map(Map.Entry::getValue).orElse(null); // TODO Find a better way of getting the target/s of the move, consider using active positions
+//        BattlePokemon defender = battle.activePokemon.values().stream().filter(battlePokemon1 -> battlePokemon1.getId().equals(playerAction.moveTarget)).findFirst().orElse(null);
 
         BattlePokemon.Move move = attacker.getMoves().stream().filter(move1 -> move1.getName().equals(playerAction.moveToUse)).findFirst().orElse(null);
 
@@ -155,7 +156,7 @@ public class Battle {
     }
 
     private void playTurn() {
-        playerActions.stream().sorted(Comparator.comparingInt(action -> action.priority))
+        playerActions.stream().sorted(Comparator.comparingInt(action -> -action.priority))
                 .forEachOrdered(playerAction -> {
                     playerAction.run(this);
                     turnOrder.add(playerAction.trainerId);

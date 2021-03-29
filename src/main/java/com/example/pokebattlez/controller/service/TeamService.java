@@ -6,7 +6,7 @@ import com.example.pokebattlez.controller.repository.TeamRepository;
 import com.example.pokebattlez.model.OnlineUsers;
 import com.example.pokebattlez.model.entity.Pokemon;
 import com.example.pokebattlez.model.entity.Team;
-import com.example.pokebattlez.model.request.PokemonRequest;
+import com.example.pokebattlez.model.request.PokemonDTO;
 import com.example.pokebattlez.model.request.TeamRequest;
 import com.example.pokebattlez.model.request.User;
 import lombok.RequiredArgsConstructor;
@@ -25,28 +25,28 @@ public class TeamService {
     private final PokemonRepository pokemonRepository;
     private final TeamRepository teamRepository;
 
-    private void update(Pokemon pokemon, PokemonRequest pokemonRequest) {
-        pokemon.updateFields(pokemonRequest);
+    private void update(Pokemon pokemon, PokemonDTO pokemonDTO) {
+        pokemon.updateFields(pokemonDTO);
         pokemonRepository.save(pokemon);
     }
 
-    private void create(Long userId, PokemonRequest pokemonRequest) {
+    private void create(Long userId, PokemonDTO pokemonDTO) {
         Team team = teamRepository
-                .findById(pokemonRequest.getTeamId())
+                .findById(pokemonDTO.getTeamId())
                 .orElse(Team.builder()
                         .trainer(accountRepository.findById(userId).orElse(null))
                         .pokemon(new ArrayList<>())
                         .build()
                 );
 
-        team.addPokemon(Pokemon.from(pokemonRequest));
+        team.addPokemon(Pokemon.from(pokemonDTO));
         teamRepository.save(team);
     }
 
-    public void updatePokemon(Long userId, PokemonRequest pokemonRequest) {
-        pokemonRepository.findById(pokemonRequest.getId()).ifPresentOrElse(
-                pokemon -> update(pokemon, pokemonRequest),
-                () -> create(userId, pokemonRequest)
+    public void updatePokemon(Long userId, PokemonDTO pokemonDTO) {
+        pokemonRepository.findById(pokemonDTO.getId()).ifPresentOrElse(
+                pokemon -> update(pokemon, pokemonDTO),
+                () -> create(userId, pokemonDTO)
         );
     }
 

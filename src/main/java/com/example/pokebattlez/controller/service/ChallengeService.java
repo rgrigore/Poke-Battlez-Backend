@@ -8,13 +8,16 @@ import com.example.pokebattlez.model.entity.Team;
 import com.example.pokebattlez.model.request.ChallengeReceive;
 import com.example.pokebattlez.model.request.ChallengeResponse;
 import com.example.pokebattlez.model.request.ChallengeSend;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,10 +82,12 @@ public class ChallengeService {
     }
 
     private void startBattle(Challenge challenge) { // TODO Check if all trainers are still online
-        String battleId = battleService.generateBattle(challenge.challenger, challenge.challenged.toArray(new Long[0]));
-
         List<String> connections = challenge.challenged.stream().map(challenged1 -> onlineUsers.getConId(challenged1).orElse(null)).collect(Collectors.toList());
         connections.add(onlineUsers.getConId(challenge.challenger).orElse(null));
+
+        connections.forEach(connection -> template.convertAndSend(String.format("/battle/load/%s", connection), ""));
+
+        String battleId = battleService.generateBattle(challenge.challenger, challenge.challenged.toArray(new Long[0]));
 
         BattleData battleData = new BattleData(battleId);
         connections.stream().filter(Objects::nonNull).forEach(connection ->

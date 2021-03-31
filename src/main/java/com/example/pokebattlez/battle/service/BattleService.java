@@ -1,6 +1,5 @@
 package com.example.pokebattlez.battle.service;
 
-import com.example.pokebattlez.battle.controller.ActionManager;
 import com.example.pokebattlez.battle.controller.Battle;
 import com.example.pokebattlez.battle.model.BasicPokemon;
 import com.example.pokebattlez.battle.model.BattlePokemon;
@@ -11,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +24,10 @@ public class BattleService {
 
     private final static List<Battle> battles = new ArrayList<>();
 
-    public void register(Battle battle) {
-        battle.setBattleService(this);
-        battles.add(battle);
-    }
+//    public void register(Battle battle) {
+//        battle.setBattleService(this);
+//        battles.add(battle);
+//    }
 
     public void useMove(String battleId ,Long trainerId, String moveName, Long targetId) {
 //        findBattle(battleId).ifPresent(battle -> battle.registerUseMove(trainerId, moveName, targetId));
@@ -48,23 +49,24 @@ public class BattleService {
         List<Long> trainers = new ArrayList<>(List.of(challenged));
         trainers.add(challenger);
 
-        Battle battle = new Battle(); // TODO Refactor to use a builder
+//        Battle battle = new Battle(); // TODO Refactor to use a builder
 
-        trainers.stream().map(teamRepository::findTeamByTrainer_Id).forEach(teamOptional -> teamOptional.ifPresent(team ->
-            battle.registerPokemonTeam(
-                    team.getTrainer().getId(),
-                    team.getPokemon().stream()
-                            .map(BattlePokemon::new)
-                            .peek(battlePokemon -> battlePokemon.setPokemonService(pokemonService))
-                            .collect(Collectors.toList())
-            )
-        ));
-
-        battle.setActionManager(ActionManager.standard());
-
-        register(battle);
-
-        return battle.getId().toString();
+//        trainers.stream().map(teamRepository::findTeamByTrainer_Id).forEach(teamOptional -> teamOptional.ifPresent(team ->
+//            battle.registerTrainer(
+//                    team.getTrainer().getId(),
+//                    team.getPokemon().stream()
+//                            .map(BattlePokemon::new)
+//                            .peek(battlePokemon -> battlePokemon.setPokemonService(pokemonService))
+//                            .collect(Collectors.toList())
+//            )
+//        ));
+//
+//        battle.setActionManager(ActionManager.standard());
+//
+//        register(battle);
+//
+//        return battle.getId().toString();
+        return null;
     }
 
     public void connectTrainer(String battleId, Long trainer) {

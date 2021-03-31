@@ -53,8 +53,7 @@ public abstract class ActionManager {
 
         private static final List<TrainerAction> availableActionTypes = List.of(
                 TrainerAction.MOVE,
-                TrainerAction.SWITCH,
-                TrainerAction.SWITCH_FAINTED
+                TrainerAction.SWITCH
         );
 
         @Override

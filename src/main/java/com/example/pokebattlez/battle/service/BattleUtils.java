@@ -9,7 +9,23 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BattleUtils {
+
+    // region Singleton
+    private static BattleUtils instance = null;
+
+    public static BattleUtils getInstance() {
+        if (instance == null) {
+            instance = new BattleUtils();
+        }
+        return instance;
+    }
+
+    private BattleUtils() {
+    }
+    // endregion
+
     private static final double[] TYPE_MODIFIERS = {0, 2.5, 5, 10, 20, 40};
+    private static final int TYPE_MODIFIER_OFFSET = 3;
 
     private static final double STAB_MODIFIER = 1.5;
 
@@ -36,9 +52,8 @@ public class BattleUtils {
         return defending.stream().mapToInt(defend -> WeaknessChart.getInstance().get(attacking).get(defend)).sum();
     }
 
-    public double calculateTypeModifier(Type attacking, List<Type> defending) {
-        int modifier = 3 + getTypeModifierIndex(attacking, defending);
-        return TYPE_MODIFIERS[Math.max(modifier, 0)];
+    public double calculateTypeModifier(int typeModifierIndex) {
+        return TYPE_MODIFIERS[Math.max(TYPE_MODIFIER_OFFSET + typeModifierIndex, 0)];
     }
 
     public double stabModifier(Type attackType, List<Type> pokemonTypes) {

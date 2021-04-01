@@ -65,10 +65,10 @@ public class Battle {
 
     private void resolveAction(Long trainerId, List<String> actionLog, List<Long> faints) {
         turnLog.addAll(actionLog);
+        // This is where damage statuses / recoil would activate their effects
         turnLog.add("");
         turnOrder.add(trainerId);
         turnFaints.addAll(faints);
-        // This is where damage statuses / recoil would activate their effects
     }
 
     private boolean trainerActivePokemonNotFainted(Long trainerId) {
@@ -101,23 +101,5 @@ public class Battle {
 //    public void startBattle() {
 //        pokemon.forEach((trainer, team) -> battleService.sendTeam(this.id.toString(), trainer, team));
 //        battleService.sendBattleState(this);
-//    }
-
-
-//
-//    private static void switchPokemon(Battle battle, PlayerAction playerAction) {
-//        battle.turnLog.add(String.format("Called back %s!",
-//                battle.activePokemon.get(playerAction.trainerId).getName()
-//        ));
-//
-//        battle.pokemon.get(playerAction.trainerId).stream()
-//                .filter(battlePokemon1 -> battlePokemon1.getPosition() == playerAction.switchToPosition).findFirst()
-//                .ifPresent(battlePokemon1 -> battle.activePokemon.replace(playerAction.trainerId, battlePokemon1));
-//
-//        battle.turnLog.add(String.format("Sent out %s!",
-//                battle.activePokemon.get(playerAction.trainerId).getName()
-//        ));
-//
-//        battle.playerActions.remove(playerAction);
 //    }
 }

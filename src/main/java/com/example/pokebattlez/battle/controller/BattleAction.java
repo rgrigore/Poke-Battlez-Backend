@@ -101,7 +101,21 @@ public abstract class BattleAction {
     }
 
     public static void doSwitch(Switch action, Battle battle) {
-        // TODO
+        action.log(String.format("Called back %s!",
+                battle.getActivePokemon().get(action.getTrainerId()).getName()
+        ));
+
+        battle.getActivePokemon().replace(
+                action.getTrainerId(),
+                battle.getPokemon()
+                        .get(action.getTrainerId()).stream()
+                        .filter(pokemon -> pokemon.getPosition() == action.targetPosition).findFirst()
+                        .orElseThrow(IllegalArgumentException::new)
+        );
+
+        action.log(String.format("Sent out %s!",
+                battle.getActivePokemon().get(action.getTrainerId()).getName()
+        ));
     }
 
 

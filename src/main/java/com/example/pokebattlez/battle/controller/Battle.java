@@ -49,7 +49,7 @@ public class Battle {
         while (actions.hasNext()) {
             BattleAction action = actions.next();
             if (trainerActivePokemonNotFainted(action.getTrainerId())) {
-                action.run(this);
+                action.run();
                 resolveAction(action.getTrainerId(), action.getLog(), action.getFaints());
             }
         }

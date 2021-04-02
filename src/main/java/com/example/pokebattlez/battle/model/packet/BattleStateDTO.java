@@ -14,7 +14,7 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BattleState {
+public class BattleStateDTO {
     private List<String> log;
     private List<Long> order;
     private Map<Long, Integer> active;

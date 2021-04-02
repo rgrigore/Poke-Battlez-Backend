@@ -24,14 +24,16 @@ public abstract class BattleAction {
     }
 
     private final TrainerAction actionType = trainerAction();
-    private final int priority;
-    private final Long trainerId;
+    protected final int priority = priority();
+    protected final Battle battle;
+    protected final Long trainerId;
 
     private final List<Long> faints = new ArrayList<>();
     private final List<String> log = new ArrayList<>();
 
-    public abstract void run(Battle battle);
+    public abstract void run();
     protected abstract TrainerAction trainerAction();
+    protected abstract int priority();
 
 
     protected void log(String message) {
@@ -125,13 +127,17 @@ public abstract class BattleAction {
         private final int movePosition;
 
         @Override
-        public void run(Battle battle) {
+        public void run() {
             BattleAction.useMove(this, battle);
         }
 
         @Override
         protected TrainerAction trainerAction() {
             return TrainerAction.MOVE;
+        }
+        @Override
+        protected int priority() { // TODO This should also take into account priority moves
+            return battle.getActivePokemon().get(trainerId).getStats().get(Stat.SPEED).getValue();
         }
     }
 
@@ -140,13 +146,17 @@ public abstract class BattleAction {
         private final int targetPosition;
 
         @Override
-        public void run(Battle battle) {
+        public void run() {
             BattleAction.doSwitch(this, battle);
         }
 
         @Override
         protected TrainerAction trainerAction() {
             return TrainerAction.SWITCH;
+        }
+        @Override
+        protected int priority() {
+            return 10000;
         }
     }
 }

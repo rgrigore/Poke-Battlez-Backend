@@ -2,7 +2,10 @@ package com.example.pokebattlez.battle.model;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -20,10 +23,12 @@ public class BasicPokemon {
         id = pokemon.getId();
         name = pokemon.getName();
         types = pokemon.getTypes().stream().map(Type::toString).collect(Collectors.toList());
-        moves = pokemon.getMoves().stream().map(BattlePokemon.Move::getName).collect(Collectors.toList());
+        moves = pokemon.getMoveNames().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).map(Map.Entry::getValue).collect(Collectors.toList());
         hp = pokemon.getStats().get(Stat.HP).getValue();
         position = pokemon.getPosition();
         frontSprite = pokemon.getFrontSprite();
         backSprite = pokemon.getBackSprite();
+
+
     }
 }

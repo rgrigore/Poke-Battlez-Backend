@@ -7,6 +7,8 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 @MessageMapping("/battle")
 public class BattleController {
@@ -19,7 +21,7 @@ public class BattleController {
 
     @MessageMapping("/{battleId}/move")
     public void chooseMove(@DestinationVariable String battleId, Request request) {
-        battleService.useMove(battleId, request.playerId, request.move, request.targetId);
+        battleService.useMove(battleId, request.playerId, request.movePosition, request.targetTrainers);
     }
 
     @MessageMapping("/{battleId}/switch")
@@ -39,10 +41,10 @@ public class BattleController {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class Request {
+    private static class Request { // TODO Get rid of this
         private Long playerId;
         private Integer index;
-        private String move;
-        private Long targetId;
+        private Integer movePosition;
+        private List<Long> targetTrainers;
     }
 }
